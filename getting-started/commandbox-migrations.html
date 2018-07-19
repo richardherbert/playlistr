@@ -1,0 +1,79 @@
+---
+layout: default
+
+previousLabel: Setup
+previousHref: getting-started/setup.html
+nextLabel: Migrate Create
+nextHref: getting-started/migrate-create.html
+---
+<div class="jumbotron">
+	<h1>Playlistr: commandbox-migrations</h1>
+
+	<p class="lead">The <code>CommandBox</code> module <code>commandbox-migrations</code> will scaffold out your database with the tables and columns it needs for your application.</p>
+</div>
+
+<div class="row">
+	<div class="col">
+		<h2>commandbox-migrations</h2>
+	</div>
+
+	<div class="w-100"></div>
+
+	<div class="col">
+		<p>Now we need to get a database onboard to store all our songs and playlists. We've chosen to use MySQL and have created a database called <code>playlistr</code>.</p>
+
+		<p>To allow <code>commandbox-migrations</code> to connect to our database we need to have a <code>.env</code> file that will hold all the connection details.</p>
+
+		<p>You won't find a <code>.env</code> file committed to this repository but you will find a example file, <code>.env.example</code> for you to rename and populate as shown.</p>
+
+		<p>Of course you'll need to change the <code>DB_USER</code> and <code>DB_PASSWORD</code> values to suit your configuration. With this in place we can get started with  <code>commandbox-migrations</code>.</p>
+
+		<p><strong>Remember:</strong> Don't allow that <code>.env</code> file be committed to your repository. You don't want those sensitive details recorded in your repository! Add a <code>.env</code> to your <code>.gitignore</code> file.</p>
+
+		<p>As you've made a change to the <code>.env</code> file you need to <code>reload</code> your <code>CommandBox</code> shell to pickup the changes.</p>
+	</div>
+
+	<div class="col-8">
+		<h3>.env</h3>
+{% highlight plaintext %}
+DB_CLASS=com.mysql.jdbc.Driver
+DB_CONNECTIONSTRING=jdbc:mysql://localhost:3306/playlistr?useUnicode=true&characterEncoding=UTF-8&useLegacyDatetimeCode=true
+DB_USER=playlistrDatabaseUsername
+DB_PASSWORD=playlistrDatabasePassword
+{% endhighlight %}
+	</div>
+</div>
+
+<div class="row">
+	<div class="col">
+		<p>So what we need to do next is:</p>
+
+		<ul>
+			<li>Reload the <code>CommandBox</code> shell</li>
+			<li>Initialise the <code>commandbox-migrations</code> setup</li>
+			<li>Install the <code>cfmigrations</code> table into your database</li>
+			<li>Add a migration script template</li>
+		</ul>
+
+		<p><strong>Advice:</strong> The <code>migrate init</code> will populate your <code>box.json</code> with configuration settings for <code>cfmigrations</code>. Many have found performance benefits in changing grammar setting, <code>defaultGrammar</code>, from <code>AutoDiscover</code> to that for your database engine. In our situation that would be <code>MySQLGrammar</code>.</p>
+	</div>
+
+	<div class="col">
+		<h3>commandbox</h3>
+{% highlight plaintext %}
+CommandBox:playlistr>reload			// reload the CommandBox shell
+CommandBox:playlistr>migrate init		// initialise the migrations setup
+CommandBox:playlistr>migrate install		// install the migrations
+CommandBox:playlistr>migrate create artists	// create your first migration script
+{% endhighlight %}
+
+
+	</div>
+</div>
+
+{% include footerNav.html
+	previousLabel=page.previousLabel
+	previousHref=page.previousHref
+	nextLabel=page.nextLabel
+	nextHref=page.nextHref
+%}

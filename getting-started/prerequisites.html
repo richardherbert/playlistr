@@ -1,0 +1,39 @@
+---
+layout: default
+
+previousLabel: Home
+previousHref: /
+nextLabel: Setup
+nextHref: getting-started/setup.html
+---
+
+<div class="jumbotron">
+		<h1>Playlistr: Prerequisites</h1>
+
+		<p class="lead">These are the things you need to have in place so you can follow along with the building of this <code>ColdBox</code> application using <code>Quick</code>.</p>
+
+		<p class="lead">Alternatively you can just checkout the <code>master</code> branch of <a href="https://github.com/richardherbert/playlistr">this repository</a> for the final product.</p>
+	</div>
+
+<div class="row">
+	<div class="col">
+		<h2>Prerequisites</h2>
+
+		<p>Before we get started there are a few prerequisites, assumptions and requirements to note.</p>
+
+		<ul>
+			<li>An understanding of the command line</li>
+			<li>An understanding of Git</li>
+			<li><code>CommandBox</code> is <a href="https://commandbox.ortusbooks.com/setup/installation">installed</a></li>
+			<li>A directory for the code to live in called <code>playlistr</code> has been made</li>
+			<li>The database engine MySQL installed and a database called <code>playlistr</code> has been created</li>
+		</ul>
+	</div>
+</div>
+
+{% include footerNav.html
+	previousLabel=page.previousLabel
+	previousHref=page.previousHref
+	nextLabel=page.nextLabel
+	nextHref=page.nextHref
+%}

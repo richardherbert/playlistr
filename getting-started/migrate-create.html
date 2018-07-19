@@ -1,0 +1,78 @@
+---
+layout: default
+
+previousLabel: CommandBox Migrations
+previousHref: getting-started/commandbox-migrations.html
+nextLabel: Migrate Up / Down
+nextHref: getting-started/migrate-up-down.html
+---
+<div class="jumbotron">
+	<h1>Playlistr: Migrate Create</h1>
+
+	<p class="lead">Let's define us a database table!</p>
+</div>
+
+<div class="row">
+	<div class="col">
+		<h2>Migrate Create</h2>
+	</div>
+
+	<div class="w-100"></div>
+
+	<div class="col">
+		<p>With the <code>commandbox-migrations</code> module in place and configured, we can now start to create a migration script. These scripts are used to modify your database tables and columns. </p>
+
+		<p>A simple <code>migrate create artists</code> will create the directory <code>./resources/database/migrations/</code> and place a migration template file name <code>yyyy_mm_dd_hhmmss_artists.cfc</code>.</p>
+
+		<p>With this boilerplate file we can modify it to build our <code>artists</code> table.</p>
+
+		<p>We use the <code>schema.create()</code> closure to create our <code>artists</code> table and add two columns. The first is <code>table.increments( "id" );</code> to add an auto incrementing <code>id</code> column. The second is <code>table.string( "name" );</code> to create a simple <code>varchar(255)</code> field. This <code>schema.create()</code> closure is wrapped in the <code>up()</code> method.</p>
+
+		<p>We also have a <code>down()</code> method. This contains a simple <code>schema.drop( "artists" );</code> which, as you can guess, deletes the <code>artists</code> table from the database.</p>
+
+		<p>Now we have a way to build our <code>artists</code> table and tear it down in a predicable and consistent manner using <code>migrate up</code> and <code>migrate down</code>.</p>
+	</div>
+
+	<div class="col">
+		<h3>migrate create artists</h3>
+{% highlight cfscript %}
+component {
+	function up( schema ) {
+		schema.create( "artists", function( table ) {
+			table.increments( "id" );
+
+			table.string( "name" );
+		} );
+	}
+
+	function down( schema ) {
+		schema.drop( "artists" );
+	}
+}
+{% endhighlight %}
+
+		<h3>yyyy_mm_dd_hhmmss_artists.cfc</h3>
+{% highlight cfscript %}
+component {
+	function up( schema ) {
+		schema.create( "artists", function( table ) {
+			table.increments( "id" );
+
+			table.string( "name" );
+		} );
+	}
+
+	function down( schema ) {
+		schema.drop( "artists" );
+	}
+}
+{% endhighlight %}
+	</div>
+</div>
+
+{% include footerNav.html
+	previousLabel=page.previousLabel
+	previousHref=page.previousHref
+	nextLabel=page.nextLabel
+	nextHref=page.nextHref
+%}

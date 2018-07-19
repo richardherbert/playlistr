@@ -1,0 +1,44 @@
+---
+layout: default
+
+previousLabel: Migrate Create
+previousHref: getting-started/migrate-create.html
+nextLabel: Migrate Up / Down
+nextHref: getting-started/migrate-up-down.html
+---
+<div class="jumbotron">
+	<h1>Playlistr: Migrate Up / Migrate Down</h1>
+
+	<p class="lead">Let's define us a database table!</p>
+</div>
+
+<div class="row">
+	<div class="col">
+		<h2>Migrate Up</h2>
+	</div>
+
+	<div class="w-100"></div>
+
+	<div class="col">
+		<p>The migrate scripts are the building blocks of <code>commandbox-migrations</code>. With them you are defining the schema for your database. These scripts are applied by <code>migrate up</code> and rolled back with <code>migrate down</code>.</p>
+
+		<p>When you call <code>migrate up</code> the <code>up()</code> method in all your scripts are run. Also the <code>cfmigrations</code> table that was created by the <code>migrate install</code> will be populated with a record of which and when each script was executed. This allows <code>commandbox-migrations</code> to keep a track of what scripts to run when <code>migrate up</code> and <code>migrate down</code> are called.</p>
+
+		<p>By calling <code>migrate up</code> the table and the columns defined are created. Check it out! Then calling <code>migrate down</code> will delete or drop the table and all it's records.</p>
+	</div>
+
+	<div class="col">
+		<h3>yyyy_mm_dd_hhmmss_artists.cfc</h3>
+{% highlight shell_session %}
+CommandBox:playlistr>migrate up
+CommandBox:playlistr>migrate down
+{% endhighlight %}
+	</div>
+</div>
+
+{% include footerNav.html
+	previousLabel=page.previousLabel
+	previousHref=page.previousHref
+	nextLabel=page.nextLabel
+	nextHref=page.nextHref
+%}
