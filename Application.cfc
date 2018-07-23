@@ -11,11 +11,13 @@ component{
 	this.setClientCookies = true;
 
 	// Java Integration
-	this.javaSettings = { 
-		loadPaths = [ ".\lib" ], 
-		loadColdFusionClassPath = true, 
-		reloadOnChange= false 
+	this.javaSettings = {
+		loadPaths = [ ".\lib" ],
+		loadColdFusionClassPath = true,
+		reloadOnChange= false
 	};
+
+	this.datasource = 'playlistr';
 
 	// COLDBOX STATIC PROPERTY, DO NOT CHANGE UNLESS THIS IS NOT THE ROOT OF YOUR COLDBOX APP
 	COLDBOX_APP_ROOT_PATH = getDirectoryFromPath( getCurrentTemplatePath() );
