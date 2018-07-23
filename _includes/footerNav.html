@@ -1,9 +1,13 @@
-<div class="row justify-content-between mb-5">
-	<div class="col">
+<div class="row justify-content-between">
+	{%- if include.previousHref %}
+	<div class="col-6 mb-5">
 		<a href="{{ include.previousHref }}" class="btn btn-primary btn-lg btn-block" role="button"><i class="fas fa-arrow-alt-circle-left"></i> {{ include.previousLabel }}</a>
 	</div>
+	{% endif %}
 
-	<div class="col text-right">
+	{%- if include.nextHref %}
+	<div class="col-6 mb-5 text-right">
 		<a href="{{ include.nextHref }}" class="btn btn-primary btn-lg btn-block" role="button">{{ include.nextLabel }} <i class="fas fa-arrow-alt-circle-right"></i></a>
 	</div>
+	{% endif %}
 </div>
