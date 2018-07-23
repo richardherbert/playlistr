@@ -26,9 +26,9 @@ nextHref: getting-started/migrate-up-down.html
 
 		<p>With this boilerplate file we can modify it to build our <code>artists</code> table.</p>
 
-		<p>We use the <code>schema.create()</code> closure to create our <code>artists</code> table and add two columns. The first is <code>table.increments( "id" );</code> to add an auto incrementing <code>id</code> column. The second is <code>table.string( "name" );</code> to create a simple <code>varchar(255)</code> field. This <code>schema.create()</code> closure is wrapped in the <code>up()</code> method.</p>
+		<p>The <code>up()</code> method is called by the <code>migrate up</code> and <code>down()</code> is called by <code>migrate down</code>.</p>
 
-		<p>We also have a <code>down()</code> method. This contains a simple <code>schema.drop( "artists" );</code> which, as you can guess, deletes the <code>artists</code> table from the database.</p>
+		<p>In this first example we have hand written the <code>SQL</code> to create and drop our table. Later you we will use <code>qb</code> to perform our database interactions.</p>
 
 		<p>Now we have a way to build our <code>artists</code> table and tear it down in a predicable and consistent manner using <code>migrate up</code> and <code>migrate down</code>.</p>
 	</div>
@@ -37,34 +37,38 @@ nextHref: getting-started/migrate-up-down.html
 		<h3>migrate create artists</h3>
 {% highlight cfscript %}
 component {
-	function up( schema ) {
-		schema.create( "artists", function( table ) {
-			table.increments( "id" );
 
-			table.string( "name" );
-		} );
-	}
+    function up( schema ) {
 
-	function down( schema ) {
-		schema.drop( "artists" );
-	}
+    }
+
+    function down( schema ) {
+
+    }
+
 }
 {% endhighlight %}
 
 		<h3>yyyy_mm_dd_hhmmss_artists.cfc</h3>
 {% highlight cfscript %}
 component {
-	function up( schema ) {
-		schema.create( "artists", function( table ) {
-			table.increments( "id" );
 
-			table.string( "name" );
-		} );
-	}
+    function up( schema ) {
+		var sql = "CREATE TABLE `artists` (
+			`id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+			`name` varchar(255) NOT NULL,
+			PRIMARY KEY (`id`)
+        ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;"
 
-	function down( schema ) {
-		schema.drop( "artists" );
-	}
+        queryExecute( sql );
+    }
+
+    function down( schema ) {
+        var sql = "DROP TABLE `artists`;"
+
+        queryExecute( sql );
+    }
+
 }
 {% endhighlight %}
 	</div>
