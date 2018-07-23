@@ -3,6 +3,15 @@
         "coldbox":"^5.1.1+715"
     },
     "installPaths":{
-        "coldbox":"coldbox"
+        "coldbox":"coldbox/"
+    },
+    "cfmigrations":{
+        "connectionInfo":{
+            "password":"${DB_PASSWORD}",
+            "connectionString":"${DB_CONNECTIONSTRING}",
+            "class":"${DB_CLASS}",
+            "username":"${DB_USER}"
+        },
+        "defaultGrammar":"MySQLGrammar"
     }
 }
