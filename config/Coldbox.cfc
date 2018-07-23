@@ -92,14 +92,14 @@
 		interceptors = [
 		];
 
-		/*
 		// module setting overrides
 		moduleSettings = {
-			moduleName = {
-				settingName = "overrideValue"
+			quick = {
+				defaultGrammar = "MySQLGrammar"
 			}
 		};
 
+		/*
 		// flash scope configuration
 		flash = {
 			scope = "session,client,cluster,ColdboxCache,or full path",
