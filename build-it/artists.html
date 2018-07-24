@@ -1,0 +1,229 @@
+---
+layout: default
+
+previousLabel: Quick
+previousHref: build-it/quick.html
+nextLabel: Albums
+nextHref: build-it/albums.html
+---
+<div class="jumbotron">
+	<h1>Playlistr: Artists</h1>
+
+	<p class="lead">Now we can get into the meat of the application!</p>
+</div>
+
+<div class="row">
+	<div class="col">
+		<h2>Artists</h2>
+	</div>
+
+	<div class="w-100"></div>
+
+	<div class="col">
+		<p>This is a simple <code>CRUD</code> feature to enable us to create, read, update and delete an <code>Artist</code> in our application.</p>
+
+		<p>To build this feature we need the following:</p>
+
+		<ul>
+			<li>A migrations script to create our <code>Artists</code> database schema</li>
+			<li>A bean to represent our <code>Artist</code> (Model)</li>
+			<li>An interface to list, add, update and delete our <code>Artist</code> (View)</li>
+			<li>A handler to orchestrate all the actions (Controller)</li>
+		</ul>
+
+		<p>If you remember we created our migrations script for <code>Artists</code> in the <a href="getting-started/migrate-create.html">Migrate Create</a> and <a href="getting-started/migrate-create.html">Migrate Up / Down</a> sections.</p>
+
+		<h3>Artist.cfc (Model)</h3>
+
+		<p>To describe the <code>Artist</code> entity to our application we need an <code>Artist.cfc</code> to hold the definition. This will be placed in the <code>models</code> directory.</p>
+
+		<p>Whilst the documentation says "<em>Every column in the related database table is retrieved and available in your entity by default</em>", with the exception of the <code>id</code>, that's not been my experience. To be able to reference a column name with a <code>getMyColumnName()</code> or <code>setMyColumnName()</code> I have had to add a <code>property</code> to access it.</p>
+
+		<figure class="figure">
+{%- highlight cfscript %}
+component extends="quick.models.BaseEntity" {
+	property name;
+}
+{%- endhighlight %}
+			<figcaption class="figure-caption">models/Artist.cfc</figcaption>
+		</figure>
+
+		<h3>Artists.cfc (Controller)</h3>
+
+		<p>Next let's create our handler <code>Artists.cfc</code>. This will be placed in the <code>handlers</code> directory. Like all <code>ColdBox</code> handlers it extends <code>coldbox.system.EventHandler</code>.</p>
+
+		<h4>Action: index()</h4>
+
+		<p>The first and default action function is <code>index()</code>.</p>
+
+		<figure class="figure">
+{%- highlight cfscript %}
+function index( event, rc, prc ) {
+	var artists = getInstance( "Artist" )
+		.orderby( "id" )
+		.all();
+
+	if( artists.count() == 0 ) {
+		relocate( "artists.create" );
+	}
+
+	prc.artists = artists.toArray();
+}
+{%- endhighlight %}
+			<figcaption class="figure-caption">models/Artist.cfc</figcaption>
+		</figure>
+
+		<p>Hopefully the intent of this method is clear. We first try and get all the <code>Artist</code> entities and if there are none we need to bounce the visitor onto the create view. If there are some artists then we need to convert the collection into an array of <code>Artist</code> entities for the listing view to loop over.</p>
+
+		<p><code>Quick</code> uses it's integration with <code>WireBox</code> to <code>getInstance( "Artist" )</code> of the <code>Artist</code> entity definition. We can then method-chains the <code>orderby( "id" )</code> and <code>all()</code> methods to retrieve all the <code>Artist</code> entities, if there are any.</p>
+
+		<h4>Action: create()</h4>
+
+		<p>If there are no <code>Artist</code> entities found, we need to create an <code>Artist</code> with the <code>create()</code> action method.</p>
+
+		<figure class="figure">
+{%- highlight cfscript %}
+function create( event, rc, prc ) {
+	param rc.id = "";
+	param rc.name = "";
+
+	prc.action = "Create";
+	prc.formAction = "artists.createAction";
+
+	event.setView( "artists/createUpdate" );
+}
+{%- endhighlight %}
+			<figcaption class="figure-caption">models/Artist.cfc</figcaption>
+		</figure>
+
+		<p>All we are doing here is populating a number of <code>rc</code> and <code>prc</code> variables used in the set <code>artists/createUpdate.cfm</code> view.</p>
+
+		<h4>Action: createAction()</h4>
+
+		<p>When the createUpdate form is submitted the <code>createAction</code> action method is called and the form <code>POST</code> variables are sent to the <code>createAction</code> action method in the <code>rc</code> structure.</p>
+
+		<figure class="figure">
+{%- highlight cfscript %}
+function createAction( event, rc, prc ) {
+	param rc.name = "";
+
+	var artist = getInstance( "Artist" )
+		.create( {
+			name: rc.name
+		} );
+
+	relocate( "artists" );
+}
+{%- endhighlight %}
+			<figcaption class="figure-caption">models/Artist.cfc</figcaption>
+		</figure>
+
+		<p>Here the <code>Artist</code> name in the <code>rc</code> structure from the form <code>POST</code> is used to create the record. The primary key <code>id</code> value is provided by the database auto-increment.</p>
+
+		<h4>Action: update()</h4>
+
+		<p>When we come to update an <code>Artist</code> we need to call the <code>update()</code> action method to populate the <code>artists/createUpdate.cfm</code> view.</p>
+
+		<figure class="figure">
+{%- highlight cfscript %}
+function update( event, rc, prc ) {
+	param rc.id = "";
+
+	var artist = getInstance( "Artist" )
+		.whereID( rc.id )
+		.get();
+
+	if( artist.count() != 1 ) {
+		relocate( "artists" );
+	}
+
+	param rc.name = artist.first().getName();
+
+	prc.action = "Update";
+	prc.formAction = "artists.updateAction";
+
+	event.setView( "artists/createUpdate" );
+}
+{%- endhighlight %}
+			<figcaption class="figure-caption">models/Artist.cfc</figcaption>
+		</figure>
+
+		<p>Once again we use <code>WireBox</code> to get an instance of our <code>Artist</code> entity but this time we get the actual entity where the primary key equals the <code>rc.id</code> what will be passed into the metod via the <code>?id=123</code> name / value pair in the URL.</p>
+
+		<p>Just in case the <code>Artist</code> can't be found by it's <code>id</code> value we bounce the visitor to the default <code>Artist</code> listing view.</p>
+
+		<p>Whilst the <code>Quick</code> documentation says "<em>Queries that return more than one record return a QuickCollection, a type of CFCollection</em>", in my experience, it appears that a <code>QuickCollection</code> is returned even when a single entity is found. For example when using <code>whereID( rc.id )</code>. Therefore, to distil the <code>QuickCollection</code> to a single entity that we can extract properties from we add <code>first()</code> before getting the desired property like <code>getName()</code>.</p>
+
+		<h4>Action: updateAction()</h4>
+
+		<p>When updating an <code>Artist</code> the form action submits to <code>artists.updateAction</code>.</p>
+
+		<figure class="figure">
+{%- highlight cfscript %}
+function updateAction( event, rc, prc ) {
+	param rc.id = "";
+	param rc.name = "";
+
+	var artist = getInstance( "Artist" )
+		.whereID( rc.id )
+		.get();
+
+	if( artist.count() == 0 ) {
+		relocate( "artists" );
+	}
+
+	artist.first()
+		.update( {
+			name: rc.name
+		} );
+
+	relocate( "artists" );
+}
+{%- endhighlight %}
+			<figcaption class="figure-caption">models/Artist.cfc</figcaption>
+		</figure>
+
+		<p>After loading the specific <code>Artist</code> entity we can update the fields that have changed, one in this case and then take the visitor back to the listing view.</p>
+
+		<h4>Action: delete()</h4>
+
+		<p>Finally, the last thing we want to do is to delete a record from the database. </p>
+
+		<figure class="figure">
+{%- highlight cfscript %}
+function delete( event, rc, prc ) {
+	param rc.id = "";
+
+	var artist = getInstance( "Artist" )
+		.whereID( rc.id )
+		.get();
+
+	if( artist.count() != 1 ) {
+		relocate( "artists" );
+	}
+
+	artist.first()
+		.delete();
+
+	relocate( "artists" );
+}
+{%- endhighlight %}
+			<figcaption class="figure-caption">models/Artist.cfc</figcaption>
+		</figure>
+
+		<p>All the previous notes apply. This time we just call the <code>delete()</code> method on the retrieved <code>Artist</code> entity and then take the visitor back to the listing view.</p>
+
+		<p>Finally we need to build the listing and create / update views we've referenced. There should be no surprises here. The only <code>Quick</code> related feature is in the <code>index.cfm</code> listing view. We are passing an array of <code>Artist</code> entities into the view via the <code>prc.artists</code> variable. We then loop over that array to get each <code>Artist</code>. When we have a single <code>Artist</code> we can use the get methods provided by <code>Quick</code> to access the values like <code>artist.getName()</code>.</p>
+
+		<p>So now we have a simple but complete <code>CRUD</code> feature using <code>Quick</code>!</p>
+
+		{% include tag.html tag='0.0.4' %}
+	</div>
+</div>
+
+{% include footerNav.html
+	previousLabel=page.previousLabel
+	previousHref=page.previousHref
+	nextLabel=page.nextLabel
+	nextHref=page.nextHref
+%}

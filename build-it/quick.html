@@ -1,0 +1,69 @@
+---
+layout: default
+
+previousLabel: Build It
+previousHref: build-it/
+nextLabel: Artists
+nextHref: build-it/artists.html
+---
+
+<div class="jumbotron">
+	<h1>Playlistr: Quick</h1>
+
+	<p class="lead">Now we get to install <code>Quick</code>.</p>
+</div>
+
+<div class="row">
+	<div class="col">
+		<h2>Quick</h2>
+
+		<p>Similar to the installation of the <code>CommandBox</code> modules, we install <code>Quick</code> from the <code>CommandBox</code> command line.</p>
+
+		<p><code>install quick</code></p>
+
+		<p>As you will see, there are several dependencies that <code>Quick</code> brings with it to support the module.</p>
+
+		<ul>
+			<li><code>qb</code></li>
+			<li><code>str</code></li>
+			<li><code>cbjavaloader</code></li>
+			<li><code>cfcollection</code></li>
+			<li><code>normalizeToArray</code></li>
+			<li><code>cbvalidation</code></li>
+			<li><code>cbi18n</code></li>
+		</ul>
+
+		<p>Additionally we need to add a <code>moduleSettings</code> entry to our <code>Coldbox.cfc</code> configuration file to tell <code>Quick</code> which database engine we are using. We could use <code>AutoDiscover</code> but once again, there are benefit in being specific so we'll use <code>MySQLGrammar</code> in this instance.</p>
+
+{% highlight cfscript %}
+moduleSettings = {
+	quick = {
+		defaultGrammar = "MySQLGrammar"
+	}
+};
+{% endhighlight %}
+
+		<p>Whilst the documentation says you can "<em>...annotate your component with the <code>quick</code> annotation</em>" I've found this to be less reliable than extending the component with <code>extends="quick.models.BaseEntity"</code>.</p>
+
+{% highlight cfscript %}
+component extends="quick.models.BaseEntity" {
+	...
+}
+{% endhighlight %}
+	</div>
+
+	<div class="col">
+		<h2>Datasource</h2>
+
+		<p>To complete our connectivity with the database we need to create a data source name (DSN). Hopefully you are familiar with doing that in your ColdFusion/Lucee Administrator and adding it to your <code>Application.cfc</code> with a <code>this.datasource = 'playlistr';</code> entry.</p>
+
+		{% include tag.html tag='0.0.3' %}
+	</div>
+</div>
+
+{% include footerNav.html
+	previousLabel=page.previousLabel
+	previousHref=page.previousHref
+	nextLabel=page.nextLabel
+	nextHref=page.nextHref
+%}
