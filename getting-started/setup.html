@@ -33,9 +33,7 @@ nextHref: getting-started/commandbox-migrations.html
 
 		<p>In addition to this description of the process there is a GitHub repository of the code needed to reproduce this product. To be able to follow along in stages there are a number of tagged releases. Each tag will be highlighted in this documentation like so:</p>
 
-		<p>
-			<a href="https://github.com/richardherbert/playlistr/tree/v0.0.1" class="btn btn-success btn-lg" role="button" target="_blank"><i class="fas fa-tag"></i> Tag: v0.0.1</a>
-		</p>
+		{% include tag.html tag='0.0.1' %}
 
 		<p><strong>Note:</strong> By default the <code>ColdBox</code> skeleton apps gitignore the framework and modules directories. Therefore when you checkout a tagged release remember to <code>install --force</code> to pull down and install all the dependancies that are in the <code>box.json</code> at that point.</p>
 	</div>
