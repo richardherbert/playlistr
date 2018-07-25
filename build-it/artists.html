@@ -61,7 +61,7 @@ component extends="quick.models.BaseEntity" {
 function index( event, rc, prc ) {
 	var artists = getInstance( "Artist" )
 		.orderby( "id" )
-		.all();
+		.get();
 
 	if( artists.count() == 0 ) {
 		relocate( "artists.create" );
@@ -75,7 +75,7 @@ function index( event, rc, prc ) {
 
 		<p>Hopefully the intent of this method is clear. We first try and get all the <code>Artist</code> entities and if there are none we need to bounce the visitor onto the create view. If there are some artists then we need to convert the collection into an array of <code>Artist</code> entities for the listing view to loop over.</p>
 
-		<p><code>Quick</code> uses it's integration with <code>WireBox</code> to <code>getInstance( "Artist" )</code> of the <code>Artist</code> entity definition. We can then method-chains the <code>orderby( "id" )</code> and <code>all()</code> methods to retrieve all the <code>Artist</code> entities, if there are any.</p>
+		<p><code>Quick</code> uses it's integration with <code>WireBox</code> to <code>getInstance( "Artist" )</code> of the <code>Artist</code> entity definition. We can then method-chains the <code>orderby( "id" )</code> and <code>get()</code> methods to retrieve the <code>Artist</code> entities, if there are any.</p>
 
 		<h4>Action: create()</h4>
 
@@ -85,7 +85,8 @@ function index( event, rc, prc ) {
 {%- highlight cfscript %}
 function create( event, rc, prc ) {
 	param rc.id = "";
-	param rc.name = "";
+
+	prc.name = "";
 
 	prc.action = "Create";
 	prc.formAction = "artists.createAction";
@@ -130,14 +131,10 @@ function update( event, rc, prc ) {
 	param rc.id = "";
 
 	var artist = getInstance( "Artist" )
-		.whereID( rc.id )
-		.get();
+		.findOrFail( rc.id )
+		.first();
 
-	if( artist.count() != 1 ) {
-		relocate( "artists" );
-	}
-
-	param rc.name = artist.first().getName();
+	prc.name = artist.getName();
 
 	prc.action = "Update";
 	prc.formAction = "artists.updateAction";
@@ -148,11 +145,7 @@ function update( event, rc, prc ) {
 			<figcaption class="figure-caption">models/Artist.cfc</figcaption>
 		</figure>
 
-		<p>Once again we use <code>WireBox</code> to get an instance of our <code>Artist</code> entity but this time we get the actual entity where the primary key equals the <code>rc.id</code> what will be passed into the metod via the <code>?id=123</code> name / value pair in the URL.</p>
-
-		<p>Just in case the <code>Artist</code> can't be found by it's <code>id</code> value we bounce the visitor to the default <code>Artist</code> listing view.</p>
-
-		<p>Whilst the <code>Quick</code> documentation says "<em>Queries that return more than one record return a QuickCollection, a type of CFCollection</em>", in my experience, it appears that a <code>QuickCollection</code> is returned even when a single entity is found. For example when using <code>whereID( rc.id )</code>. Therefore, to distil the <code>QuickCollection</code> to a single entity that we can extract properties from we add <code>first()</code> before getting the desired property like <code>getName()</code>.</p>
+		<p>Once again we use <code>WireBox</code> to get an instance of our <code>Artist</code> entity. This time we use <code>findOrFail( rc.id )</code> to find our record and <code>first()</code> to return a single <code>Artist</code> entity. The primary key, <code>rc.id</code>, will be passed into the method via the <code>?id=123</code> name / value pair in the URL. If for any reason the primary key value of <code>rc.id</code> is not found, <code>Quick</code> will throw an "<em>EntityNotFound</em>" exception which, in a full application, should be caught with a <code>try/catch</code> around the code.</p>
 
 		<h4>Action: updateAction()</h4>
 
@@ -164,15 +157,8 @@ function updateAction( event, rc, prc ) {
 	param rc.id = "";
 	param rc.name = "";
 
-	var artist = getInstance( "Artist" )
-		.whereID( rc.id )
-		.get();
-
-	if( artist.count() == 0 ) {
-		relocate( "artists" );
-	}
-
-	artist.first()
+	getInstance( "Artist" )
+		.findOrFail( rc.id )
 		.update( {
 			name: rc.name
 		} );
@@ -183,7 +169,7 @@ function updateAction( event, rc, prc ) {
 			<figcaption class="figure-caption">models/Artist.cfc</figcaption>
 		</figure>
 
-		<p>After loading the specific <code>Artist</code> entity we can update the fields that have changed, one in this case and then take the visitor back to the listing view.</p>
+		<p>As you can see, we can find and update our changed <code>Artist</code> all in one expression. The same advice concerning an entity not being found applies.</p>
 
 		<h4>Action: delete()</h4>
 
@@ -195,14 +181,7 @@ function delete( event, rc, prc ) {
 	param rc.id = "";
 
 	var artist = getInstance( "Artist" )
-		.whereID( rc.id )
-		.get();
-
-	if( artist.count() != 1 ) {
-		relocate( "artists" );
-	}
-
-	artist.first()
+		.findOrFail( rc.id )
 		.delete();
 
 	relocate( "artists" );
@@ -211,9 +190,9 @@ function delete( event, rc, prc ) {
 			<figcaption class="figure-caption">models/Artist.cfc</figcaption>
 		</figure>
 
-		<p>All the previous notes apply. This time we just call the <code>delete()</code> method on the retrieved <code>Artist</code> entity and then take the visitor back to the listing view.</p>
+		<p>All the previous notes apply. This time we just call the <code>delete()</code> method on the found <code>Artist</code> entity and then take the visitor back to the listing view.</p>
 
-		<p>Finally we need to build the listing and create / update views we've referenced. There should be no surprises here. The only <code>Quick</code> related feature is in the <code>index.cfm</code> listing view. We are passing an array of <code>Artist</code> entities into the view via the <code>prc.artists</code> variable. We then loop over that array to get each <code>Artist</code>. When we have a single <code>Artist</code> we can use the get methods provided by <code>Quick</code> to access the values like <code>artist.getName()</code>.</p>
+		<p>Finally we need to build the listing and create / update views we've referenced. There should be no surprises here. The only <code>Quick</code> related feature is in the <code>index.cfm</code> listing view. We are passing an array of <code>Artist</code> entities into the view via the <code>prc.artists</code> variable created in the handler. We then loop over that array to get each <code>Artist</code>. When we have a single <code>Artist</code> we can use the get methods provided by <code>Quick</code> to access the values like <code>artist.getName()</code>.</p>
 
 		<p>So now we have a simple but complete <code>CRUD</code> feature using <code>Quick</code>!</p>
 
