@@ -5,7 +5,7 @@
     },
     "installPaths":{
         "coldbox":"coldbox/",
-        "quick":"modules/quick"
+        "quick":"modules/quick/"
     },
     "cfmigrations":{
         "connectionInfo":{
