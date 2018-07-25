@@ -1,11 +1,9 @@
 {
     "dependencies":{
-        "coldbox":"^5.1.1+715",
-        "quick":"^1.2.0"
+        "coldbox":"^5.1.1+715"
     },
     "installPaths":{
-        "coldbox":"coldbox/",
-        "quick":"modules/quick"
+        "coldbox":"coldbox/"
     },
     "cfmigrations":{
         "connectionInfo":{
