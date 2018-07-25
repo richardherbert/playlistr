@@ -1,52 +1,72 @@
 ---
 layout: default
 
-previousLabel: Quick
-previousHref: build-it/quick.html
+previousLabel: Artists
+previousHref: build-it/artists.html
 nextLabel: Albums
 nextHref: build-it/albums.html
 ---
 <div class="jumbotron">
-	<h1>Playlistr: Artists</h1>
+	<h1>Playlistr: Albums</h1>
 
-	<p class="lead">Now we can get into the meat of the application!</p>
+	<p class="lead">Let's add another feature.</p>
 </div>
 
 <div class="row">
 	<div class="col">
-		<h2>Artists</h2>
+		<h2>Albums</h2>
 	</div>
 
 	<div class="w-100"></div>
 
 	<div class="col">
-		<p>This is a simple <code>CRUD</code> feature to enable us to create, read, update and delete an <code>Artist</code> in our application.</p>
+		<p>Let's start with another simple <code>CRUD</code> feature. This time to create, read, update and delete an <code>Album</code> in our application. We're going to introduce a couple of new ideas with this one. Firstly we'll use <code>qb</code> inside our <code>commandbox-migrations</code> script rather than raw <code>SQL</code>.</p>
 
-		<p>To build this feature we need the following:</p>
+		<h3>Migrate Create</h3>
 
-		<ul>
-			<li>A migrations script to create our <code>Artists</code> database schema</li>
-			<li>A bean to represent our <code>Artist</code> (Model)</li>
-			<li>An interface to list, add, update and delete our <code>Artist</code> (View)</li>
-			<li>A handler to orchestrate all the actions (Controller)</li>
-		</ul>
+		<p>If you remember we created our <code>commandbox-migrations</code> script in the command line like so: <code>migrate create albums</code></p>
 
-		<p>If you remember we created our migrations script for <code>Artists</code> in the <a href="getting-started/migrate-create.html">Migrate Create</a> and <a href="getting-started/migrate-create.html">Migrate Up / Down</a> sections.</p>
-
-		<h3>Artist.cfc (Model)</h3>
-
-		<p>To describe the <code>Artist</code> entity to our application we need an <code>Artist.cfc</code> to hold the definition. This will be placed in the <code>models</code> directory.</p>
-
-		<p>Whilst the documentation says "<em>Every column in the related database table is retrieved and available in your entity by default</em>", with the exception of the <code>id</code>, that's not been my experience. To be able to reference a column name with a <code>getMyColumnName()</code> or <code>setMyColumnName()</code> I have had to add a <code>property</code> to access it.</p>
+		<p>With the script templated we can add our <code>qb</code> functions to build our table schema.</p>
 
 		<figure class="figure">
 {%- highlight cfscript %}
-component extends="quick.models.BaseEntity" {
-	property name;
+component {
+
+	function up( schema ) {
+		schema.create( "albums", function( table ) {
+			table.increments( "id" );
+
+			table.string( "name" );
+		} );
+	}
+
+	function down( schema ) {
+		schema.drop( "albums" );
+	}
+
 }
 {%- endhighlight %}
-			<figcaption class="figure-caption">models/Artist.cfc</figcaption>
+			<figcaption class="figure-caption">resources/database/migrations/2018_07_02_100000_albums.cfc</figcaption>
 		</figure>
+
+		<p>With <code>qb</code> we have access to closure methods that can create and drop a table as well as add columns definitions. We pass the <code>schema</code> from <code>qb</code> into our <code>up()</code> and <code>down()</code> methods to give us access to the features of <code>qb</code>.</p>
+
+		<p>The <code>create()</code> closure takes the name of the table we want to create, "<em>albums</em>", and a function to define the columns in that table. The <code>increments()</code> method adds an auto-incrementing integer primary key and <code>string()</code> adds a <code>varchar(255)</code> string column to the table.</p>
+
+		<p>In the <code>down()</code> method we'll use <code>drop()</code> to delete our "<em>albums</em>" table.</p>
+
+		<h3>Album Service</h3>
+
+		<p>Now let's introduce the idea of interacting with our database via a service component. </p>
+
+
+
+
+
+
+
+
+
 
 		<h3>Artists.cfc (Controller)</h3>
 
@@ -131,7 +151,8 @@ function update( event, rc, prc ) {
 	param rc.id = "";
 
 	var artist = getInstance( "Artist" )
-		.findOrFail( rc.id );
+		.findOrFail( rc.id )
+		.first();
 
 	prc.name = artist.getName();
 
@@ -144,7 +165,7 @@ function update( event, rc, prc ) {
 			<figcaption class="figure-caption">models/Artist.cfc</figcaption>
 		</figure>
 
-		<p>Once again we use <code>WireBox</code> to get an instance of our <code>Artist</code> entity. This time we use <code>findOrFail( rc.id )</code> to find our record and return a single <code>Artist</code> entity. The primary key, <code>rc.id</code>, will be passed into the method via the <code>?id=123</code> name / value pair in the URL. If for any reason the primary key value of <code>rc.id</code> is not found, <code>Quick</code> will throw an "<em>EntityNotFound</em>" exception which, in a full application, should be caught with a <code>try/catch</code> around the code.</p>
+		<p>Once again we use <code>WireBox</code> to get an instance of our <code>Artist</code> entity. This time we use <code>findOrFail( rc.id )</code> to find our record and <code>first()</code> to return a single <code>Artist</code> entity. The primary key, <code>rc.id</code>, will be passed into the method via the <code>?id=123</code> name / value pair in the URL. If for any reason the primary key value of <code>rc.id</code> is not found, <code>Quick</code> will throw an "<em>EntityNotFound</em>" exception which, in a full application, should be caught with a <code>try/catch</code> around the code.</p>
 
 		<h4>Action: updateAction()</h4>
 
@@ -179,7 +200,7 @@ function updateAction( event, rc, prc ) {
 function delete( event, rc, prc ) {
 	param rc.id = "";
 
-	getInstance( "Artist" )
+	var artist = getInstance( "Artist" )
 		.findOrFail( rc.id )
 		.delete();
 
