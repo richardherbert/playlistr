@@ -63,7 +63,7 @@
 	function delete( event, rc, prc ) {
 		param rc.id = "";
 
-		var artist = getInstance( "Artist" )
+		getInstance( "Artist" )
 			.findOrFail( rc.id )
 			.delete();
 
