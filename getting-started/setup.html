@@ -31,11 +31,11 @@ nextHref: getting-started/commandbox-migrations.html
 			<li>To allow <code>commandbox-migrations</code> to interact with your database we need to tell it where it is and how to connect to it. We use a local <code>.env</code> file for that purpose. The module <code>commandbox-dotenv</code> provides that support so we need to install that as well. More on our <code>.env</code> file later.</li>
 		</ul>
 
-		<p>In addition to this description of the process there is a GitHub repository of the code needed to reproduce this product. To be able to follow along in stages there are a number of tagged releases. Each tag will be highlighted in this documentation like so:</p>
+		<p>In addition to this description of the process there is a GitHub repository of the code needed to reproduce this product. To be able to follow along in stages there are a number of branch releases. Each branch will be highlighted in this documentation like so:</p>
 
-		{% include tag.html tag='0.0.1' %}
+		{% include branch.html branch='0.0.1-base-install' %}
 
-		<p><strong>Note:</strong> By default the <code>ColdBox</code> skeleton apps gitignore the framework and modules directories. Therefore when you checkout a tagged release remember to <code>install --force</code> to pull down and install all the dependancies that are in the <code>box.json</code> at that point.</p>
+		<p><strong>Note:</strong> By default the <code>ColdBox</code> skeleton apps gitignore the framework and modules directories. Therefore when you checkout a branch release remember to <code>install --force</code> to pull down and install all the dependencies that are in the <code>box.json</code> at that point.</p>
 	</div>
 
 	<div class="col">
