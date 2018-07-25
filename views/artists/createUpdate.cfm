@@ -14,7 +14,7 @@
 
 						<div class="form-group">
 							<label for="name">Name</label>
-							<input id="name" name="name" type="text" value="#rc.name#" class="form-control" placeholder="The name of the artist" required autofocus>
+							<input id="name" name="name" type="text" value="#prc.name#" class="form-control" placeholder="The name of the artist" required autofocus>
 						</div>
 
 						<div>
