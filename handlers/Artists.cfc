@@ -37,8 +37,7 @@
 		param rc.id = "";
 
 		var artist = getInstance( "Artist" )
-			.findOrFail( rc.id )
-			.first();
+			.findOrFail( rc.id );
 
 		prc.name = artist.getName();
 
