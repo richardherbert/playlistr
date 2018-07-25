@@ -131,8 +131,7 @@ function update( event, rc, prc ) {
 	param rc.id = "";
 
 	var artist = getInstance( "Artist" )
-		.findOrFail( rc.id )
-		.first();
+		.findOrFail( rc.id );
 
 	prc.name = artist.getName();
 
@@ -145,7 +144,7 @@ function update( event, rc, prc ) {
 			<figcaption class="figure-caption">models/Artist.cfc</figcaption>
 		</figure>
 
-		<p>Once again we use <code>WireBox</code> to get an instance of our <code>Artist</code> entity. This time we use <code>findOrFail( rc.id )</code> to find our record and <code>first()</code> to return a single <code>Artist</code> entity. The primary key, <code>rc.id</code>, will be passed into the method via the <code>?id=123</code> name / value pair in the URL. If for any reason the primary key value of <code>rc.id</code> is not found, <code>Quick</code> will throw an "<em>EntityNotFound</em>" exception which, in a full application, should be caught with a <code>try/catch</code> around the code.</p>
+		<p>Once again we use <code>WireBox</code> to get an instance of our <code>Artist</code> entity. This time we use <code>findOrFail( rc.id )</code> to find our record and return a single <code>Artist</code> entity. The primary key, <code>rc.id</code>, will be passed into the method via the <code>?id=123</code> name / value pair in the URL. If for any reason the primary key value of <code>rc.id</code> is not found, <code>Quick</code> will throw an "<em>EntityNotFound</em>" exception which, in a full application, should be caught with a <code>try/catch</code> around the code.</p>
 
 		<h4>Action: updateAction()</h4>
 
