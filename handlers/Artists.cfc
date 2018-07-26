@@ -25,7 +25,7 @@
 	function createAction( event, rc, prc ) {
 		param rc.name = "";
 
-		var artist = getInstance( "Artist" )
+		getInstance( "Artist" )
 			.create( {
 				name: rc.name
 			} );
