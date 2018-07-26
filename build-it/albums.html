@@ -3,13 +3,13 @@ layout: default
 
 previousLabel: Artists
 previousHref: build-it/artists.html
-nextLabel: Albums
-nextHref: build-it/albums.html
+nextLabel: Albums &amp; Artists
+nextHref: build-it/albums-artists.html
 ---
 <div class="jumbotron">
 	<h1>Playlistr: Albums</h1>
 
-	<p class="lead">Let's add another feature.</p>
+	<p class="lead">Let's add an <code>Album</code> feature to our application and introduce some new ideas.</p>
 </div>
 
 <div class="row">
@@ -20,16 +20,18 @@ nextHref: build-it/albums.html
 	<div class="w-100"></div>
 
 	<div class="col">
-		<p>Let's start with another simple <code>CRUD</code> feature. This time to create, read, update and delete an <code>Album</code> in our application. We're going to introduce a couple of new ideas with this one. Firstly we'll use <code>qb</code> inside our <code>commandbox-migrations</code> script rather than raw <code>SQL</code>.</p>
+		<p>Let's start with another simple <code>CRUD</code> feature. This time to create, read, update and delete an <code>Album</code> in our application. We're going to introduce a few new ideas with this one.</p>
+
+		<p>This time we'll use <code>qb</code> inside our <code>commandbox-migrations</code> script rather than raw <code>SQL</code>.</p>
 
 		<h3>Migrate Create</h3>
 
-		<p>If you remember we created our <code>commandbox-migrations</code> script in the command line like so: <code>migrate create albums</code></p>
+		<p>If you remember, we created our <code>commandbox-migrations</code> script in the terminal. We can do it again with <code>migrate create albums</code></p>
 
-		<p>With the script templated we can add our <code>qb</code> functions to build our table schema.</p>
+		<p>With the script template we can add our <code>qb</code> functions to build our table schema.</p>
 
-		<figure class="figure">
-{%- highlight cfscript %}
+		{%- capture content %}
+			{%- highlight cfscript %}
 component {
 
 	function up( schema ) {
@@ -45,9 +47,13 @@ component {
 	}
 
 }
-{%- endhighlight %}
-			<figcaption class="figure-caption">resources/database/migrations/2018_07_02_100000_albums.cfc</figcaption>
-		</figure>
+			{%- endhighlight %}
+		{%- endcapture %}
+
+		{%- include figure.html
+			content=content
+			caption="resources/database/migrations/2018_07_02_100000_albums.cfc"
+		-%}
 
 		<p>With <code>qb</code> we have access to closure methods that can create and drop a table as well as add columns definitions. We pass the <code>schema</code> from <code>qb</code> into our <code>up()</code> and <code>down()</code> methods to give us access to the features of <code>qb</code>.</p>
 
@@ -55,170 +61,284 @@ component {
 
 		<p>In the <code>down()</code> method we'll use <code>drop()</code> to delete our "<em>albums</em>" table.</p>
 
+		<h3>Album.cfc (Model)</h3>
+
+		<p>This is the same as the <code>Artist</code> entity and saved as <code>models/Album.cfc</code></p>
+
+		<h3>index.cfm &amp; createUpdate.cfm (Views)</h3>
+
+		<p>These are also the same as those for the <code>Artist</code>.</p>
+
+		<p>Next we create our <code>Album</code> service and handler.</p>
+
+		<h3>Service &amp; Handler</h3>
+
+		<hr>
+	</div>
+</div>
+
+<div class="row">
+	<div class="col-6">
 		<h3>Album Service</h3>
 
-		<p>Now let's introduce the idea of interacting with our database via a service component. </p>
+		<p>Now let's introduce the idea of interacting with our database via a Service component. Add the file <code>models/AlbumService.cfc</code> to your webroot. The start of this Service component should start by injecting <code>WireBox</code> and include a simple <code>init()</code> constructor method.</p>
 
+		{%- capture content %}
+			{%- highlight cfscript %}
+component {
+	property wirebox inject="wirebox";
 
+	public AlbumService function init() {
+		return this;
+	}
+}
+			{%- endhighlight %}
+		{%- endcapture %}
 
+		{%- include figure.html
+			content=content
+			caption="models/AlbumService.cfc"
+		-%}
 
+		<p>Now we can add new methods to build out the functionality to interface with our database using <code>Quick</code> features.</p>
 
+		<h4>getByID()</h4>
 
+		{%- capture content %}
+			{%- highlight cfscript %}
+public Album function getByID( required any id) {
+	return wirebox.getInstance( "Album" )
+		.findOrFail( id );
+}
+			{%- endhighlight %}
+		{%- endcapture %}
 
+		{%- include figure.html
+			content=content
+			caption="models/AlbumService.cfc"
+		-%}
 
+		<p>This should look similar to a portion of the <code>update()</code> action from the <code>Artists</code> handler.</p>
 
+		<h4>getAllAsArray()</h4>
 
-		<h3>Artists.cfc (Controller)</h3>
+		{%- capture content %}
+			{%- highlight cfscript %}
+public array function getAllAsArray() {
+	return wirebox.getInstance( "Album" )
+		.orderby( "id" )
+		.get()
+		.toArray();
+}
+			{%- endhighlight %}
+		{%- endcapture %}
 
-		<p>Next let's create our handler <code>Artists.cfc</code>. This will be placed in the <code>handlers</code> directory. Like all <code>ColdBox</code> handlers it extends <code>coldbox.system.EventHandler</code>.</p>
+		{%- include figure.html
+			content=content
+			caption="models/AlbumService.cfc"
+		-%}
+
+		<p>Once again this should look familiar to a portion of the <code>index()</code> action. This time we've chained the <code>toArray()</code> method to our <code>get()</code> to convert the collection to an array before sending it back.</p>
+
+		<h4>create()</h4>
+
+		{%- capture content %}
+			{%- highlight cfscript %}
+public Album function create( required struct values ) {
+	return wirebox.getInstance( "Album" )
+		.create( values );
+}
+			{%- endhighlight %}
+		{%- endcapture %}
+
+		{%- include figure.html
+			content=content
+			caption="models/AlbumService.cfc"
+		-%}
+
+		<p>Another similar method. This time we take in a structure of the name/value pairs and pass that on to populate a new row in our database.</p>
+
+		<h4>update()</h4>
+
+		{%- capture content %}
+			{%- highlight cfscript %}
+public void function update( required any id, required struct values ) {
+	getByID( id )
+		.update( {
+			name: values.name
+		} );
+}
+			{%- endhighlight %}
+		{%- endcapture %}
+
+		{%- include figure.html
+			content=content
+			caption="models/AlbumService.cfc"
+		-%}
+
+		<p>Here we chain the <code>update()</code> onto the end of the <code>getByID()</code> metod we wrote earlier and pass on the structure of names/values to update an existing row in our database.</p>
+
+		<h4>delete()</h4>
+
+		{%- capture content %}
+			{%- highlight cfscript %}
+public void function delete( required any id ) {
+	getByID( id )
+		.delete();
+}
+			{%- endhighlight %}
+		{%- endcapture %}
+
+		{%- include figure.html
+			content=content
+			caption="models/AlbumService.cfc"
+		-%}
+
+		<p>Similar to <code>update()</code>, we chain to the end of <code>getByID()</code> to delete an existing row from our database.</p>
+	</div>
+
+	<div class="col-6">
+		<h3>Album Handler</h3>
+
+		<p>With our new <code>AlbumService</code> we can simplify our handler. So first create your handler <code>handlers/Albums.cfc</code> and start with:</p>
+
+		{%- capture content %}
+			{%- highlight cfscript %}
+component extends="coldbox.system.EventHandler" {
+	property AlbumService inject="AlbumService";
+}
+			{%- endhighlight %}
+		{%- endcapture %}
+
+		{%- include figure.html
+			content=content
+			caption="handlers/Albums.cfc"
+		-%}
+
+		<p>We've added <code>property AlbumService inject="AlbumService";</code> to the component pseudo constructor to inject the <code>AlbumService</code> into the handler using the <code>WireBox</code> convention.</p>
 
 		<h4>Action: index()</h4>
 
-		<p>The first and default action function is <code>index()</code>.</p>
-
-		<figure class="figure">
-{%- highlight cfscript %}
+		{%- capture content %}
+			{%- highlight cfscript %}
 function index( event, rc, prc ) {
-	var artists = getInstance( "Artist" )
-		.orderby( "id" )
-		.get();
+	prc.albums = AlbumService.getAllAsArray();
 
-	if( artists.count() == 0 ) {
-		relocate( "artists.create" );
+	if( prc.albums.len() == 0 ) {
+		relocate( "albums.create" );
 	}
-
-	prc.artists = artists.toArray();
 }
-{%- endhighlight %}
-			<figcaption class="figure-caption">models/Artist.cfc</figcaption>
-		</figure>
+			{%- endhighlight %}
+		{%- endcapture %}
 
-		<p>Hopefully the intent of this method is clear. We first try and get all the <code>Artist</code> entities and if there are none we need to bounce the visitor onto the create view. If there are some artists then we need to convert the collection into an array of <code>Artist</code> entities for the listing view to loop over.</p>
+		{%- include figure.html
+			content=content
+			caption="handlers/Albums.cfc"
+		-%}
 
-		<p><code>Quick</code> uses it's integration with <code>WireBox</code> to <code>getInstance( "Artist" )</code> of the <code>Artist</code> entity definition. We can then method-chains the <code>orderby( "id" )</code> and <code>get()</code> methods to retrieve the <code>Artist</code> entities, if there are any.</p>
+		<p>We capture all the <code>Albums</code> into the variable <code>prc.albums</code> for our view with the <code>getAllAsArray()</code> method in the <code>AlbumService</code> component but bounce the visitor onto the create action if none are returned.</p>
 
 		<h4>Action: create()</h4>
 
-		<p>If there are no <code>Artist</code> entities found, we need to create an <code>Artist</code> with the <code>create()</code> action method.</p>
-
-		<figure class="figure">
-{%- highlight cfscript %}
-function create( event, rc, prc ) {
-	param rc.id = "";
-
-	prc.name = "";
-
-	prc.action = "Create";
-	prc.formAction = "artists.createAction";
-
-	event.setView( "artists/createUpdate" );
-}
-{%- endhighlight %}
-			<figcaption class="figure-caption">models/Artist.cfc</figcaption>
-		</figure>
-
-		<p>All we are doing here is populating a number of <code>rc</code> and <code>prc</code> variables used in the set <code>artists/createUpdate.cfm</code> view.</p>
+		<p>This is the same as <code>Artists</code>.</p>
 
 		<h4>Action: createAction()</h4>
 
-		<p>When the createUpdate form is submitted the <code>createAction</code> action method is called and the form <code>POST</code> variables are sent to the <code>createAction</code> action method in the <code>rc</code> structure.</p>
-
-		<figure class="figure">
-{%- highlight cfscript %}
+		{%- capture content %}
+			{%- highlight cfscript %}
 function createAction( event, rc, prc ) {
 	param rc.name = "";
 
-	var artist = getInstance( "Artist" )
-		.create( {
-			name: rc.name
-		} );
+	AlbumService.create( {
+		name: rc.name
+	} );
 
-	relocate( "artists" );
+	relocate( "albums" );
 }
-{%- endhighlight %}
-			<figcaption class="figure-caption">models/Artist.cfc</figcaption>
-		</figure>
+			{%- endhighlight %}
+		{%- endcapture %}
 
-		<p>Here the <code>Artist</code> name in the <code>rc</code> structure from the form <code>POST</code> is used to create the record. The primary key <code>id</code> value is provided by the database auto-increment.</p>
+		{%- include figure.html
+			content=content
+			caption="handlers/Albums.cfc"
+		-%}
+
+		<p>This is similar to the <code>Artists</code> action but it now uses the <code>AlbumService</code> to create the database row.</p>
 
 		<h4>Action: update()</h4>
 
-		<p>When we come to update an <code>Artist</code> we need to call the <code>update()</code> action method to populate the <code>artists/createUpdate.cfm</code> view.</p>
-
-		<figure class="figure">
-{%- highlight cfscript %}
+		{%- capture content %}
+			{%- highlight cfscript %}
 function update( event, rc, prc ) {
 	param rc.id = "";
 
-	var artist = getInstance( "Artist" )
-		.findOrFail( rc.id )
-		.first();
+	var album = AlbumService.getByID( rc.id );
 
-	prc.name = artist.getName();
+	prc.name = album.getName();
 
 	prc.action = "Update";
-	prc.formAction = "artists.updateAction";
+	prc.formAction = "albums.updateAction";
 
-	event.setView( "artists/createUpdate" );
+	event.setView( "albums/createUpdate" );
 }
-{%- endhighlight %}
-			<figcaption class="figure-caption">models/Artist.cfc</figcaption>
-		</figure>
+			{%- endhighlight %}
+		{%- endcapture %}
 
-		<p>Once again we use <code>WireBox</code> to get an instance of our <code>Artist</code> entity. This time we use <code>findOrFail( rc.id )</code> to find our record and <code>first()</code> to return a single <code>Artist</code> entity. The primary key, <code>rc.id</code>, will be passed into the method via the <code>?id=123</code> name / value pair in the URL. If for any reason the primary key value of <code>rc.id</code> is not found, <code>Quick</code> will throw an "<em>EntityNotFound</em>" exception which, in a full application, should be caught with a <code>try/catch</code> around the code.</p>
+		{%- include figure.html
+			content=content
+			caption="handlers/Albums.cfc"
+		-%}
+
+		<p>Once again this is similar to the <code>Artists</code> action but it now uses the <code>AlbumService</code> to get our <code>Album</code> for updating.</p>
 
 		<h4>Action: updateAction()</h4>
 
-		<p>When updating an <code>Artist</code> the form action submits to <code>artists.updateAction</code>.</p>
-
-		<figure class="figure">
-{%- highlight cfscript %}
+		{%- capture content %}
+			{%- highlight cfscript %}
 function updateAction( event, rc, prc ) {
 	param rc.id = "";
 	param rc.name = "";
 
-	getInstance( "Artist" )
-		.findOrFail( rc.id )
-		.update( {
-			name: rc.name
-		} );
+	AlbumService.update( rc.id, {
+		name: rc.name
+	} );
 
-	relocate( "artists" );
+	relocate( "albums" );
 }
-{%- endhighlight %}
-			<figcaption class="figure-caption">models/Artist.cfc</figcaption>
-		</figure>
+			{%- endhighlight %}
+		{%- endcapture %}
 
-		<p>As you can see, we can find and update our changed <code>Artist</code> all in one expression. The same advice concerning an entity not being found applies.</p>
+		{%- include figure.html
+			content=content
+			caption="handlers/Albums.cfc"
+		-%}
+
+		<p>Again, like the <code>Artists</code> action we use the <code>AlbumService</code> to update our <code>Album</code> by passing it the <code>id</code> and name/value structure of the columns to be updated.</p>
 
 		<h4>Action: delete()</h4>
 
-		<p>Finally, the last thing we want to do is to delete a record from the database. </p>
-
-		<figure class="figure">
-{%- highlight cfscript %}
+		{%- capture content %}
+			{%- highlight cfscript %}
 function delete( event, rc, prc ) {
 	param rc.id = "";
 
-	var artist = getInstance( "Artist" )
-		.findOrFail( rc.id )
-		.delete();
+	AlbumService.delete( rc.id );
 
-	relocate( "artists" );
+	relocate( "albums" );
 }
-{%- endhighlight %}
-			<figcaption class="figure-caption">models/Artist.cfc</figcaption>
-		</figure>
+			{%- endhighlight %}
+		{%- endcapture %}
 
-		<p>All the previous notes apply. This time we just call the <code>delete()</code> method on the found <code>Artist</code> entity and then take the visitor back to the listing view.</p>
+		{%- include figure.html
+			content=content
+			caption="handlers/Albums.cfc"
+		-%}
 
-		<p>Finally we need to build the listing and create / update views we've referenced. There should be no surprises here. The only <code>Quick</code> related feature is in the <code>index.cfm</code> listing view. We are passing an array of <code>Artist</code> entities into the view via the <code>prc.artists</code> variable created in the handler. We then loop over that array to get each <code>Artist</code>. When we have a single <code>Artist</code> we can use the get methods provided by <code>Quick</code> to access the values like <code>artist.getName()</code>.</p>
-
-		<p>So now we have a simple but complete <code>CRUD</code> feature using <code>Quick</code>!</p>
-
-		{% include branch.html branch='0.1.0-artists' %}
+		<p>Finally the <code>delete()</code> action uses the <code>AlbumService</code> to removed the selected row from the database.</p>
 	</div>
 </div>
+
+{% include branch.html branch='0.1.1-albums-crud' %}
 
 {% include footerNav.html
 	previousLabel=page.previousLabel
