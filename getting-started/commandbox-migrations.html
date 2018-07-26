@@ -19,7 +19,7 @@ nextHref: getting-started/migrate-create.html
 
 	<div class="w-100"></div>
 
-	<div class="col">
+	<div class="col-6">
 		<p>Now we need to get a database onboard to store all our songs and playlists. We've chosen to use MySQL and have created a database called <code>playlistr</code>.</p>
 
 		<p>To allow <code>commandbox-migrations</code> to connect to our database we need to have a <code>.env</code> file that will hold all the connection details.</p>
@@ -33,7 +33,7 @@ nextHref: getting-started/migrate-create.html
 		<p>As you've made a change to the <code>.env</code> file you need to <code>reload</code> your <code>CommandBox</code> shell to pickup the changes.</p>
 	</div>
 
-	<div class="col-8">
+	<div class="col-6">
 		<h3>.env</h3>
 {% highlight plaintext %}
 DB_CLASS=com.mysql.jdbc.Driver
@@ -45,7 +45,7 @@ DB_PASSWORD=playlistrDatabasePassword
 </div>
 
 <div class="row">
-	<div class="col">
+	<div class="col-6">
 		<p>So what we need to do next is:</p>
 
 		<ul>
@@ -58,16 +58,14 @@ DB_PASSWORD=playlistrDatabasePassword
 		<p><strong>Advice:</strong> The <code>migrate init</code> will populate your <code>box.json</code> with configuration settings for <code>cfmigrations</code>. Many have found performance benefits in changing grammar setting, <code>defaultGrammar</code>, from <code>AutoDiscover</code> to that for your database engine. In our situation that would be <code>MySQLGrammar</code>.</p>
 	</div>
 
-	<div class="col">
+	<div class="col-6">
 		<h3>commandbox</h3>
 {% highlight plaintext %}
-CommandBox:playlistr>reload			// reload the CommandBox shell
-CommandBox:playlistr>migrate init		// initialise the migrations setup
-CommandBox:playlistr>migrate install		// install the migrations
-CommandBox:playlistr>migrate create artists	// create your first migration script
+CommandBox:playlistr>reload
+CommandBox:playlistr>migrate init
+CommandBox:playlistr>migrate install
+CommandBox:playlistr>migrate create artists
 {% endhighlight %}
-
-
 	</div>
 </div>
 

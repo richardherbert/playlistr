@@ -19,7 +19,7 @@ nextHref: getting-started/commandbox-migrations.html
 
 	<div class="w-100"></div>
 
-	<div class="col">
+	<div class="col-6">
 		<p>The best way to get started with a <code>ColdBox</code> application is to fire up <code>CommandBox</code> in your terminal, command line or shell.</p>
 
 		<ul>
@@ -30,15 +30,9 @@ nextHref: getting-started/commandbox-migrations.html
 			<li>Then we need to install the <code>CommandBox</code> module <code>commandbox-migrations</code> to help us with the creation of our database tables.</li>
 			<li>To allow <code>commandbox-migrations</code> to interact with your database we need to tell it where it is and how to connect to it. We use a local <code>.env</code> file for that purpose. The module <code>commandbox-dotenv</code> provides that support so we need to install that as well. More on our <code>.env</code> file later.</li>
 		</ul>
-
-		<p>In addition to this description of the process there is a GitHub repository of the code needed to reproduce this product. To be able to follow along in stages there are a number of branch releases. Each branch will be highlighted in this documentation like so:</p>
-
-		{% include branch.html branch='0.0.1-base-install' %}
-
-		<p><strong>Note:</strong> By default the <code>ColdBox</code> skeleton apps gitignore the framework and modules directories. Therefore when you checkout a branch release remember to <code>install --force</code> to pull down and install all the dependencies that are in the <code>box.json</code> at that point.</p>
 	</div>
 
-	<div class="col">
+	<div class="col-6">
 {% highlight shell_session %}
 Richards-MacBook-Pro:~ rdh$ mkdir playlistr
 Richards-MacBook-Pro:~ rdh$ cd playlistr
@@ -62,26 +56,15 @@ CommandBox:playlistr>install commandbox-dotenv
 	</div>
 </div>
 
-<!-- <div class="row">
+<div class="row">
 	<div class="col">
-		<p>Now we need to get a database onboard to store all our song and playlists. We've chosen to use MySQL and have created a database called <code>playlistr</code>.</p>
+		<p>In addition to this description of the process there is a GitHub repository of the code needed to reproduce this product. To be able to follow along in stages there are a number of branch releases. Each branch will be highlighted in this documentation like so:</p>
 
-		<p>To allow <code>commandbox-migrations</code> to connect to our database we need to create a <code>.env</code> file that will hold all the connetion details. So create a <code>.env</code> file in your <code>playlistr</code> directory and add this content.</p>
-
-		<p>You won't find a <code>.env</code> file committed to this repository but you will find a example file, <code>.env.example</code> for you to rename and populate like so:</p>
-
-		<p>Of course you'll need to change the <code>username</code> and password to suit your configuration. With this in place we can get started with  <code>commandbox-migrations</code>.</p>
+		<p><strong>Note:</strong> By default the <code>ColdBox</code> skeleton apps gitignore the framework and modules directories. Therefore when you checkout a branch release remember to <code>install --force</code> to pull down and install all the dependencies that are in the <code>box.json</code> at that point.</p>
 	</div>
+</div>
 
-	<div class="col-8">
-{% highlight plaintext %}
-DB_CLASS=com.mysql.jdbc.Driver
-DB_CONNECTIONSTRING=jdbc:mysql://localhost:3306/playlistr?useUnicode=true&characterEncoding=UTF-8&useLegacyDatetimeCode=true
-DB_USER=playlistrDatabaseUsername
-DB_PASSWORD=playlistrDatabasePassword
-{% endhighlight %}
-	</div>
-</div> -->
+{% include branch.html branch='0.0.1-base-install' %}
 
 {% include footerNav.html
 	previousLabel=page.previousLabel
