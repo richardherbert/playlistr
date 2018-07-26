@@ -194,10 +194,10 @@ function delete( event, rc, prc ) {
 		<p>Finally we need to build the listing and create / update views we've referenced. There should be no surprises here. The only <code>Quick</code> related feature is in the <code>index.cfm</code> listing view. We are passing an array of <code>Artist</code> entities into the view via the <code>prc.artists</code> variable created in the handler. We then loop over that array to get each <code>Artist</code>. When we have a single <code>Artist</code> we can use the get methods provided by <code>Quick</code> to access the values like <code>artist.getName()</code>.</p>
 
 		<p>So now we have a simple but complete <code>CRUD</code> feature using <code>Quick</code>!</p>
-
-		{% include branch.html branch='0.1.0-artists' %}
 	</div>
 </div>
+
+{% include branch.html branch='0.1.0-artists' %}
 
 {% include footerNav.html
 	previousLabel=page.previousLabel
