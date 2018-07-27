@@ -3,4 +3,8 @@ component extends="quick.models.BaseEntity" {
 	// and available in your entity by default" without this property
 	// artist.getName() fails
 	property name;
+
+	function albums() {
+		return hasMany( "Album" );
+	}
 }
