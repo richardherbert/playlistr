@@ -11,8 +11,14 @@
 
 	function create( event, rc, prc ) {
 		param rc.id = "";
+		param rc.artistID = "";
 
 		prc.name = "";
+
+		prc.artists = getInstance( "Artist" )
+			.orderby( "id" )
+			.get()
+			.toArray();
 
 		prc.action = "Create";
 		prc.formAction = "albums.createAction";
@@ -24,7 +30,8 @@
 		param rc.name = "";
 
 		AlbumService.create( {
-			name: rc.name
+			name: rc.name,
+			artistID: rc.artistID
 		} );
 
 		relocate( "albums" );
@@ -37,6 +44,13 @@
 
 		prc.name = album.getName();
 
+		prc.artistID = album.getArtist().getID();
+
+		prc.artists = getInstance( "Artist" )
+			.orderby( "id" )
+			.get()
+			.toArray();
+
 		prc.action = "Update";
 		prc.formAction = "albums.updateAction";
 
@@ -46,9 +60,11 @@
 	function updateAction( event, rc, prc ) {
 		param rc.id = "";
 		param rc.name = "";
+		param rc.artistID = "";
 
 		AlbumService.update( rc.id, {
-			name: rc.name
+			name: rc.name,
+			artistID: rc.artistID
 		} );
 
 		relocate( "albums" );

@@ -15,6 +15,7 @@
 		param rc.id = "";
 
 		prc.name = "";
+		prc.albums = [];
 
 		prc.action = "Create";
 		prc.formAction = "artists.createAction";
@@ -40,6 +41,8 @@
 			.findOrFail( rc.id );
 
 		prc.name = artist.getName();
+
+		prc.albums = artist.getAlbums().toArray();
 
 		prc.action = "Update";
 		prc.formAction = "artists.updateAction";
