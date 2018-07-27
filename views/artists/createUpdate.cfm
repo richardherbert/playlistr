@@ -17,6 +17,24 @@
 							<input id="name" name="name" type="text" value="#prc.name#" class="form-control" placeholder="The name of the artist" required autofocus>
 						</div>
 
+						<cfif prc.albums.len() != 0>
+							<table class="table table-striped table-bordered">
+								<thead class="thead-dark">
+									<tr>
+										<th scope="col">Albums</th>
+									</tr>
+								</thead>
+
+								<tbody>
+									<cfloop array="#prc.albums#" item="local.album">
+										<tr>
+											<td><a href="#event.buildLink( to='albums.update', queryString='id=#local.album.getID()#' )# ">#local.album.getName()#</a></td>
+										</tr>
+									</cfloop>
+								</tbody>
+							</table>
+						</cfif>
+
 						<div>
 							<button class="btn btn-lg btn-success btn-block" type="submit">#prc.action# Artist</button>
 						</div>
