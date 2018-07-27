@@ -24,9 +24,7 @@ component {
 
 	public void function update( required any id, required struct values ) {
 		getByID( id )
-			.update( {
-				name: values.name
-			} );
+			.update( values );
 	}
 
 	public void function delete( required any id ) {
