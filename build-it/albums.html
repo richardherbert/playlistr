@@ -164,9 +164,7 @@ public Album function create( required struct values ) {
 			{%- highlight cfscript %}
 public void function update( required any id, required struct values ) {
 	getByID( id )
-		.update( {
-			name: values.name
-		} );
+		.update( values );
 }
 			{%- endhighlight %}
 		{%- endcapture %}
@@ -176,7 +174,7 @@ public void function update( required any id, required struct values ) {
 			caption="models/AlbumService.cfc"
 		-%}
 
-		<p>Here we chain the <code>update()</code> onto the end of the <code>getByID()</code> metod we wrote earlier and pass on the structure of names/values to update an existing row in our database.</p>
+		<p>Here we chain the <code>update()</code> onto the end of the <code>getByID()</code> method we wrote earlier and pass on the structure of names/values to update an existing row in our database.</p>
 
 		<h4>delete()</h4>
 
