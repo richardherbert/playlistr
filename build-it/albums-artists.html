@@ -1,0 +1,376 @@
+---
+layout: default
+
+previousLabel: Albums
+previousHref: build-it/albums.html
+#nextLabel: Albums &amp; Artists
+#nextHref: build-it/albums-artists.html
+---
+<div class="jumbotron">
+	<h1>Playlistr: Albums &amp; Artists</h1>
+
+	<p class="lead">How about if we join up our <code>Albums</code> with our <code>Artists</code> so we can remember who recorded what.</p>
+</div>
+
+<div class="row">
+	<div class="col">
+		<p>If we're going to create a relationship between our <code>Albums</code> and our <code>Artists</code> we'll need to alter our database schema. As we've seen before, <code>commandbox-migrations</code> with <code>qb</code> allows us to create tables and columns in our database. Amazingly it also allows us to alter an existing schema. So let's create a new script with <code>migrate create albums-artists</code> and modify it to add our relationships.</p>
+
+		{%- capture content %}
+			{%- highlight cfscript %}
+component {
+
+	function up( schema ) {
+		schema.alter( "albums", function( table ) {
+			table.addColumn(
+				table.unsignedInteger( "artistID" ).nullable()
+			).addConstraint(
+				table.foreignKey( "artistID" )
+					.references( "id" )
+					.onTable( "artists" )
+					.onDelete( "cascade" )
+			);
+		} );
+	}
+
+	function down( schema ) {
+		schema.alter( "albums", function( table ) {
+			table.dropForeignKey( table.foreignKey( "artistID" ) )
+				.dropColumn( "artistID" );
+		} );
+	}
+
+}
+			{%- endhighlight %}
+		{%- endcapture %}
+
+		{%- include figure.html
+			content=content
+			caption="resources/database/migrations/2018_07_03_100000_albums-artists.cfc"
+		-%}
+
+		<p>Now when we call <code>migrate up</code> from our terminal our <code>albums</code> table is altered with a foreign key column called <code>artistID</code> on the <code>artists</code> table. Also we can call <code>migrate down</code> to drop the foreign key and column.</p>
+
+		<p><strong>Beware:</strong> Calling <code>migrate down</code> will run all your <code>down()</code> methods and will drop you back to a database empty of all records and tables. If you just wanted to revert the last change you add the switch <code>--once</code> like so: <code>migrate down --once</code> and the same can be used if you want to step up through your migration with <code>migrate up --once</code></p>
+
+		<p>We need to make changes to both the <code>Album</code> and <code>Artist</code> side of the model, controllers and views as well as our <code>AlbumService</code>.</p>
+	</div>
+</div>
+
+<div class="row">
+	<div class="col">
+		<h3>Album (Model)</h3>
+
+		<p>Here we need to tell the application that the <code>Album</code> is a child of an <code>Artist</code> and therefore it belongs to an <code>Artist</code>.</p>
+
+		{%- capture content %}
+			{%- highlight cfscript %}
+component extends="quick.models.BaseEntity" {
+	property name;
+	property artistID sqltype="cf_sql_integer";
+
+	function artist() {
+		return belongsTo( "Artist" );
+	}
+}
+			{%- endhighlight %}
+		{%- endcapture %}
+
+		{%- include figure.html
+			content=content
+			caption="models/Album.cfc"
+		-%}
+
+		<p>We've added an <code>artistID</code> property with an <code>sqltype</code> of <code>cf_sql_integer</code>. This allows <code>Quick</code> to insert an <code>Album</code> row where there is, as yet, no <code>Artist</code> associated and therefore the value would be <code>NULL</code>.</p>
+
+		<p>The <code>artist()</code> method allows us to get the <code>Artist</code> associated with the <code>Album</code> by using <code>getArtist()</code> on the retrieved <code>Album</code>. The <code>belongsTo()</code> is a <code>Quick</code> method that tells the entity which entity to relate to.</p>
+	</div>
+
+	<div class="col">
+		<h2>Artist (Model)</h2>
+
+		<p>With our <code>Artist</code> we need to be able to get all the <code>Album</code> entities associated, or children, of our <code>Artist</code>.</p>
+
+		{%- capture content %}
+			{%- highlight cfscript %}
+component extends="quick.models.BaseEntity" {
+	property name;
+
+	function albums() {
+		return hasMany( "Album" );
+	}
+}
+			{%- endhighlight %}
+		{%- endcapture %}
+
+		{%- include figure.html
+			content=content
+			caption="models/Artist.cfc"
+		-%}
+
+		<p>There is no extra property to add but there is a new method called <code>albums()</code>. This provides a <code>getAlbums()</code> method to our <code>Artist</code> entity. The method <code>hasMany()</code> returns a <code>Quick</code> collection of <code>Album</code> entities.</p>
+
+	</div>
+</div>
+
+<hr>
+
+<div class="row">
+	<div class="col">
+		<h3>Album (Controller)</h3>
+
+		<p>We need to touch a few of the action methods to add support for the <code>Artists</code> associated with our <code>Album</code>.</p>
+
+		<h4>Action: create()</h4>
+
+		{%- capture content %}
+			{%- highlight cfscript %}
+function create( event, rc, prc ) {
+	param rc.id = "";
+	param rc.artistID = "";
+
+	prc.name = "";
+
+	prc.artists = getInstance( "Artist" )
+		.orderby( "id" )
+		.get()
+		.toArray();
+
+	prc.action = "Create";
+	prc.formAction = "albums.createAction";
+
+	event.setView( "albums/createUpdate" );
+}
+			{%- endhighlight %}
+		{%- endcapture %}
+
+		{%- include figure.html
+			content=content
+			caption="handlers/Albums.cfc"
+		-%}
+
+		<p>Here we've added a <code>rc.artistID</code> to initialise the value and an array of all the <code>Artists</code> for use in the view.</p>
+
+		<h4>Action: createAction()</h4>
+
+		{%- capture content %}
+			{%- highlight cfscript %}
+function createAction( event, rc, prc ) {
+	param rc.name = "";
+
+	AlbumService.create( {
+		name: rc.name,
+		artistID: rc.artistID
+	} );
+
+	relocate( "albums" );
+}
+			{%- endhighlight %}
+		{%- endcapture %}
+
+		{%- include figure.html
+			content=content
+			caption="handlers/Albums.cfc"
+		-%}
+
+		<p>All that has been changed here is adding the <code>artistID</code> to the values passed onto the <code>create()</code> method in our <code>AlbumService</code>.</p>
+
+		<h4>Action: update()</h4>
+
+		{%- capture content %}
+			{%- highlight cfscript %}
+function update( event, rc, prc ) {
+	param rc.id = "";
+
+	var album = AlbumService.getByID( rc.id );
+
+	prc.name = album.getName();
+
+	prc.artistID = album.getArtist().getID();
+
+	prc.artists = getInstance( "Artist" )
+		.orderby( "id" )
+		.get()
+		.toArray();
+
+	prc.action = "Update";
+	prc.formAction = "albums.updateAction";
+
+	event.setView( "albums/createUpdate" );
+}
+			{%- endhighlight %}
+		{%- endcapture %}
+
+		{%- include figure.html
+			content=content
+			caption="handlers/Albums.cfc"
+		-%}
+
+		<p>For our <code>Album</code> view we need to know which, if any, <code>Artist</code> is associated with our <code>Album</code>. The line <code>rc.artistID = album.getArtist().getID();</code> get the <code>Artist</code> ID value for us to use in the view. Once again we also need to have an array of all the <code>Artists</code>.</p>
+
+		<h4>Action: updateAction()</h4>
+
+		{%- capture content %}
+			{%- highlight cfscript %}
+function updateAction( event, rc, prc ) {
+	param rc.id = "";
+	param rc.name = "";
+	param rc.artistID = "";
+
+	AlbumService.update( rc.id, {
+		name: rc.name,
+		artistID: rc.artistID
+	} );
+
+	relocate( "albums" );
+}
+			{%- endhighlight %}
+		{%- endcapture %}
+
+		{%- include figure.html
+			content=content
+			caption="handlers/Albums.cfc"
+		-%}
+
+		<p>Finally we need to ensure there is an <code>rc.artistID</code> and that it's passed onto our <code>AlbumService</code> method <code>update()</code>.</p>
+	</div>
+
+	<div class="col">
+		<h3>Artist (Controller)</h3>
+
+		<p>Once again, just a few changes to support the views.</p>
+
+		<h4>Action: create()</h4>
+
+		{%- capture content %}
+			{%- highlight cfscript %}
+function create( event, rc, prc ) {
+	param rc.id = "";
+
+	prc.name = "";
+	prc.albums = [];
+
+	prc.action = "Create";
+	prc.formAction = "artists.createAction";
+
+	event.setView( "artists/createUpdate" );
+}
+			{%- endhighlight %}
+		{%- endcapture %}
+
+		{%- include figure.html
+			content=content
+			caption="handlers/Artists.cfc"
+		-%}
+
+		<p>There's very little to change here. We just need to defined our <code>prc.albums</code> as an empty array for the view to know not display a table of <code>Albums</code>.</p>
+
+		<h4>Action: update()</h4>
+
+		{%- capture content %}
+			{%- highlight cfscript %}
+function update( event, rc, prc ) {
+	param rc.id = "";
+
+	var artist = getInstance( "Artist" )
+		.findOrFail( rc.id );
+
+	prc.name = artist.getName();
+
+	prc.albums = artist.getAlbums().toArray();
+
+	prc.action = "Update";
+	prc.formAction = "artists.updateAction";
+
+	event.setView( "artists/createUpdate" );
+}
+			{%- endhighlight %}
+		{%- endcapture %}
+
+		{%- include figure.html
+			content=content
+			caption="handlers/Artists.cfc"
+		-%}
+
+		<p>There's very little to change here. Just to get all the <code>Albums</code> for use to display when updating an Artist.</p>
+	</div>
+</div>
+
+<div class="row">
+	<div class="col">
+		<hr>
+
+		<p>Next we need to make use of all this new data from the relationships we've established by using the views to reference the <code>Album</code> and <code>Artist</code> entities.</p>
+	</div>
+</div>
+
+<div class="row">
+	<div class="col">
+		<h3>Album (createUpdate.cfm)</h3>
+
+		{%- capture content %}
+			{%- highlight cfscript %}
+<cfif prc.artists.len() != 0>
+	<div class="form-group">
+		<label for="exampleFormControlSelect1">Artist</label>
+
+		<select id="artistID" name="artistID" class="form-control">
+			<option value="">Select an artist</option>
+
+			<cfloop array="#prc.artists#" item="artist">
+				<option value="#artist.getID()#" #( artist.getID() == prc.artistID ? "selected" : "" )#>#artist.getName()#</option>
+			</cfloop>
+		</select>
+	</div>
+</cfif>
+			{%- endhighlight %}
+		{%- endcapture %}
+
+		{%- include figure.html
+			content=content
+			caption="views/albums/createUpdate.cfm"
+		-%}
+
+		<p>If we have some <code>Artist</code> entities, we want to display a dropdown list of them to be able to choose from. Also, when updating an <code>Album</code> where an <code>Artist</code> has previously been associated with the <code>Album</code>, we want that <code>Artist</code> to be pre-selected.</p>
+
+		<h3>Artist (createUpdate.cfm)</h3>
+
+		{%- capture content %}
+			{%- highlight cfscript %}
+<cfif prc.albums.len() != 0>
+	<table class="table table-striped table-bordered">
+		<thead class="thead-dark">
+			<tr>
+				<th scope="col">Albums</th>
+			</tr>
+		</thead>
+
+		<tbody>
+			<cfloop array="#prc.albums#" item="local.album">
+				<tr>
+					<td><a href="#event.buildLink( to='albums.update', queryString='id=#local.album.getID()#' )# ">#local.album.getName()#</a></td>
+				</tr>
+			</cfloop>
+		</tbody>
+	</table>
+</cfif>
+			{%- endhighlight %}
+		{%- endcapture %}
+
+		{%- include figure.html
+			content=content
+			caption="views/artists/createUpdate.cfm"
+		-%}
+
+		<p>Again, if we have some <code>Albums</code> associated  with our <code>Artist</code> we'll want to list then and also provide a link to allow us to jump to that <code>Album</code>.</p>
+	</div>
+</div>
+
+{% include branch.html branch='0.1.2-albums-artists' %}
+
+{% include footerNav.html
+	previousLabel=page.previousLabel
+	previousHref=page.previousHref
+	nextLabel=page.nextLabel
+	nextHref=page.nextHref
+%}
