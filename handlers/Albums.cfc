@@ -28,6 +28,7 @@
 
 	function createAction( event, rc, prc ) {
 		param rc.name = "";
+		param rc.artistID = "";
 
 		AlbumService.create( {
 			name: rc.name,
