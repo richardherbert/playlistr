@@ -157,6 +157,7 @@ function create( event, rc, prc ) {
 			{%- highlight cfscript %}
 function createAction( event, rc, prc ) {
 	param rc.name = "";
+	param rc.artistID = "";
 
 	AlbumService.create( {
 		name: rc.name,
@@ -173,7 +174,7 @@ function createAction( event, rc, prc ) {
 			caption="handlers/Albums.cfc"
 		-%}
 
-		<p>All that has been changed here is adding the <code>artistID</code> to the values passed onto the <code>create()</code> method in our <code>AlbumService</code>.</p>
+		<p>All that has been changed here is adding a default value for <code>rc.artistID</code> and passing the submitted value onto the <code>create()</code> method in our <code>AlbumService</code>.</p>
 
 		<h4>Action: update()</h4>
 
