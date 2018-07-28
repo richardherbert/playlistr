@@ -11,9 +11,10 @@
 
 	function create( event, rc, prc ) {
 		param rc.id = "";
-		param rc.artistID = "";
 
 		prc.name = "";
+
+		prc.artistID = "";
 
 		prc.artists = getInstance( "Artist" )
 			.orderby( "id" )
