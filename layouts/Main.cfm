@@ -50,6 +50,7 @@
 				<a class="navbar-brand" href="#event.buildLink('')#"><strong>Home</strong></a>
 				<a class="navbar-brand" href="#event.buildLink('artists')#"><strong>Artists</strong></a>
 				<a class="navbar-brand" href="#event.buildLink('albums')#"><strong>Albums</strong></a>
+				<a class="navbar-brand" href="#event.buildLink('songs')#"><strong>Songs</strong></a>
 			</div>
 
 			<div class="collapse navbar-collapse" id="navbar-collapse">
