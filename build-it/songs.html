@@ -1,0 +1,120 @@
+---
+layout: default
+
+previousLabel: Albums &amp; Artists
+previousHref: build-it/albums-artists.html
+#nextLabel: Albums &amp; Artists
+#nextHref: build-it/albums-artists.html
+---
+<div class="jumbotron">
+	<h1>Playlistr: Songs</h1>
+
+	<p class="lead">Adding a <code>Song</code> feature will be similar to the others but with some new twists.</p>
+</div>
+
+<div class="row">
+	<div class="col">
+		<h2>Songs</h2>
+	</div>
+
+	<div class="w-100"></div>
+
+	<div class="col">
+		<p>We'll be building support for <code>Songs</code> in the same way as we have the other features in this app.</p>
+
+
+
+
+
+
+
+		<!-- <p>Let's start with another simple <code>CRUD</code> feature. This time to create, read, update and delete an <code>Album</code> in our application. We're going to introduce a few new ideas with this one.</p>
+
+		<p>This time we'll use <code>qb</code> inside our <code>commandbox-migrations</code> script rather than raw <code>SQL</code>.</p> -->
+
+		<h3>Migrate Create</h3>
+
+		<p>Using <code>commandbox-migrations</code> as before in the terminal, we use <code>migrate create songs</code> to create a templated script which we'll update to support <code>Songs</code> and the relationship with <code>Albums</code>.</p>
+
+		{%- capture content %}
+			{%- highlight cfscript %}
+component {
+
+	function up( schema ) {
+		schema.create( "songs", function( table ) {
+			table.uuid( "id" ).primaryKey();
+
+			table.string( "name" );
+
+			table.unsignedInteger( "albumID" )
+				.nullable()
+				.references( "id" )
+				.onTable( "albums" )
+				.onDelete( "cascade" );
+		} );
+	}
+
+	function down( schema ) {
+		schema.drop( "songs" );
+	}
+
+}
+			{%- endhighlight %}
+		{%- endcapture %}
+
+		{%- include figure.html
+			content=content
+			caption="resources/database/migrations/2018_07_04_100000_songs.cfc"
+		-%}
+
+		<p>This time we've made our primary key a <code>UUID</code>, which is a <code>char(35)</code>, and added the foreign key relationship with our <code>Album</code> table.</p>
+
+		<h3>Song.cfc (Model)</h3>
+
+		<p>This is similar to the <code>Album</code> entity and saved as <code>models/Song.cfc</code> with a relationship to <code>Albums</code> with <code>belongsTo( "Album" )</code> and declaring the primary key as a <code>UUID</code> type.</p>
+
+
+		{%- capture content %}
+			{%- highlight cfscript %}
+component extends="quick.models.BaseEntity" {
+	property keyType inject="UUID@quick" persistent=false;
+	property name;
+
+	property albumID sqltype="cf_sql_integer";
+
+	function album() {
+		return belongsTo( "Album" );
+	}
+}
+			{%- endhighlight %}
+		{%- endcapture %}
+
+		{%- include figure.html
+			content=content
+			caption="models/Song.cfc"
+		-%}
+
+		<h3>SongService.cfc (Model)</h3>
+
+		<p>We also have a service to do all our database interaction in the same way as <code>Albums</code>.</p>
+
+		<h3>index.cfm &amp; createUpdate.cfm (Views)</h3>
+
+		<p>These are also the same as those for the <code>Albums</code>.</p>
+
+		<h3>Handler</h3>
+
+		<p>Once again, our <code>Songs</code> handler is the same as the one for <code>Albums</code> with the obvious names changed.</p>
+
+		<hr>
+	</div>
+</div>
+
+{% include branch.html branch='0.4.0-songs' %}
+
+{% include footerNav.html
+	previousLabel=page.previousLabel
+	previousHref=page.previousHref
+	nextLabel=page.nextLabel
+	nextHref=page.nextHref
+%}
