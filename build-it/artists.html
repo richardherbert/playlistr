@@ -37,7 +37,7 @@ nextHref: build-it/albums.html
 
 		<p>To describe the <code>Artist</code> entity to our application we need an <code>Artist.cfc</code> to hold the definition. This will be placed in the <code>models</code> directory.</p>
 
-		<p>Whilst the documentation says "<em>Every column in the related database table is retrieved and available in your entity by default</em>", with the exception of the <code>id</code>, that's not been my experience. To be able to reference a column name with a <code>getMyColumnName()</code> or <code>setMyColumnName()</code> I have had to add a <code>property</code> to access it.</p>
+		<p>To be able to reference a column in <code>Quick</code> with a <code>getMyColumnName()</code> or <code>setMyColumnName()</code> you have to add a <code>property</code> to access it. The only exception to this is the <code>id</code> column which you don't have to define as it's provided by default.</p>
 
 		<figure class="figure">
 {%- highlight cfscript %}
