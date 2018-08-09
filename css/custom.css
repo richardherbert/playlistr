@@ -1,0 +1,31 @@
+figure.figure { display: block; }
+
+figure.highlight {
+	padding: 10px;
+	border-radius: 8px;
+}
+
+figure.highlight > pre { margin-bottom: 0px; }
+
+code.language-shell_session { color: #faf6e4; }
+code.language-plaintext { color: #faf6e4; }
+
+.highlight {
+	color: #faf6e4;
+	background-color: #212121;
+}
+
+.highlight .k, .highlight .kd, .highlight .kv, .highlight .kt {
+	color: #c78dcd;
+}
+
+.highlight .nx { color: #f78c6a; }
+.highlight .s2 { color: #c3e88d; }
+.highlight .nf { color: #82a2df; }
+.highlight .gp { color: #faf6e4; }
+.highlight .go { color: #faf6e4; }
+.highlight .k { color: #89ddfd; }
+.highlight .o { color: #89ddfd; }
+.highlight .p { color: #89ddfd; }
+.highlight .mi { color: #f78c6a; }
+.highlight .err { color: #89ddfd; background-color: #212121 }
