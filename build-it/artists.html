@@ -39,14 +39,18 @@ nextHref: build-it/albums.html
 
 		<p>To be able to reference a column in <code>Quick</code> with a <code>getMyColumnName()</code> or <code>setMyColumnName()</code> you have to add a <code>property</code> to access it. The only exception to this is the <code>id</code> column which you don't have to define as it's provided by default.</p>
 
-		<figure class="figure">
-{%- highlight cfscript %}
+		{%- capture content %}
+			{%- highlight cfscript %}
 component extends="quick.models.BaseEntity" {
 	property name;
 }
-{%- endhighlight %}
-			<figcaption class="figure-caption">models/Artist.cfc</figcaption>
-		</figure>
+			{%- endhighlight %}
+		{%- endcapture %}
+
+		{%- include figure.html
+			content=content
+			caption="models/Artist.cfc"
+		-%}
 
 		<h3>Artists.cfc (Controller)</h3>
 
@@ -56,8 +60,8 @@ component extends="quick.models.BaseEntity" {
 
 		<p>The first and default action function is <code>index()</code>.</p>
 
-		<figure class="figure">
-{%- highlight cfscript %}
+		{%- capture content %}
+			{%- highlight cfscript %}
 function index( event, rc, prc ) {
 	var artists = getInstance( "Artist" )
 		.orderby( "id" )
@@ -69,9 +73,13 @@ function index( event, rc, prc ) {
 
 	prc.artists = artists.toArray();
 }
-{%- endhighlight %}
-			<figcaption class="figure-caption">models/Artist.cfc</figcaption>
-		</figure>
+			{%- endhighlight %}
+		{%- endcapture %}
+
+		{%- include figure.html
+			content=content
+			caption="models/Artist.cfc"
+		-%}
 
 		<p>Hopefully the intent of this method is clear. We first try and get all the <code>Artist</code> entities and if there are none we need to bounce the visitor onto the create view. If there are some artists then we need to convert the collection into an array of <code>Artist</code> entities for the listing view to loop over.</p>
 
@@ -81,8 +89,8 @@ function index( event, rc, prc ) {
 
 		<p>If there are no <code>Artist</code> entities found, we need to create an <code>Artist</code> with the <code>create()</code> action method.</p>
 
-		<figure class="figure">
-{%- highlight cfscript %}
+		{%- capture content %}
+			{%- highlight cfscript %}
 function create( event, rc, prc ) {
 	param rc.id = "";
 
@@ -93,9 +101,13 @@ function create( event, rc, prc ) {
 
 	event.setView( "artists/createUpdate" );
 }
-{%- endhighlight %}
-			<figcaption class="figure-caption">models/Artist.cfc</figcaption>
-		</figure>
+			{%- endhighlight %}
+		{%- endcapture %}
+
+		{%- include figure.html
+			content=content
+			caption="models/Artist.cfc"
+		-%}
 
 		<p>All we are doing here is populating a number of <code>rc</code> and <code>prc</code> variables used in the set <code>artists/createUpdate.cfm</code> view.</p>
 
@@ -103,8 +115,8 @@ function create( event, rc, prc ) {
 
 		<p>When the createUpdate form is submitted the <code>createAction</code> action method is called and the form <code>POST</code> variables are sent to the <code>createAction</code> action method in the <code>rc</code> structure.</p>
 
-		<figure class="figure">
-{%- highlight cfscript %}
+		{%- capture content %}
+			{%- highlight cfscript %}
 function createAction( event, rc, prc ) {
 	param rc.name = "";
 
@@ -115,9 +127,13 @@ function createAction( event, rc, prc ) {
 
 	relocate( "artists" );
 }
-{%- endhighlight %}
-			<figcaption class="figure-caption">models/Artist.cfc</figcaption>
-		</figure>
+			{%- endhighlight %}
+		{%- endcapture %}
+
+		{%- include figure.html
+			content=content
+			caption="models/Artist.cfc"
+		-%}
 
 		<p>Here the <code>Artist</code> name in the <code>rc</code> structure from the form <code>POST</code> is used to create the record. The primary key <code>id</code> value is provided by the database auto-increment.</p>
 
@@ -125,8 +141,8 @@ function createAction( event, rc, prc ) {
 
 		<p>When we come to update an <code>Artist</code> we need to call the <code>update()</code> action method to populate the <code>artists/createUpdate.cfm</code> view.</p>
 
-		<figure class="figure">
-{%- highlight cfscript %}
+		{%- capture content %}
+			{%- highlight cfscript %}
 function update( event, rc, prc ) {
 	param rc.id = "";
 
@@ -140,9 +156,13 @@ function update( event, rc, prc ) {
 
 	event.setView( "artists/createUpdate" );
 }
-{%- endhighlight %}
-			<figcaption class="figure-caption">models/Artist.cfc</figcaption>
-		</figure>
+			{%- endhighlight %}
+		{%- endcapture %}
+
+		{%- include figure.html
+			content=content
+			caption="models/Artist.cfc"
+		-%}
 
 		<p>Once again we use <code>WireBox</code> to get an instance of our <code>Artist</code> entity. This time we use <code>findOrFail( rc.id )</code> to find our record and return a single <code>Artist</code> entity. The primary key, <code>rc.id</code>, will be passed into the method via the <code>?id=123</code> name / value pair in the URL. If for any reason the primary key value of <code>rc.id</code> is not found, <code>Quick</code> will throw an "<em>EntityNotFound</em>" exception which, in a full application, should be caught with a <code>try/catch</code> around the code.</p>
 
@@ -150,8 +170,8 @@ function update( event, rc, prc ) {
 
 		<p>When updating an <code>Artist</code> the form action submits to <code>artists.updateAction</code>.</p>
 
-		<figure class="figure">
-{%- highlight cfscript %}
+		{%- capture content %}
+			{%- highlight cfscript %}
 function updateAction( event, rc, prc ) {
 	param rc.id = "";
 	param rc.name = "";
@@ -164,9 +184,13 @@ function updateAction( event, rc, prc ) {
 
 	relocate( "artists" );
 }
-{%- endhighlight %}
-			<figcaption class="figure-caption">models/Artist.cfc</figcaption>
-		</figure>
+			{%- endhighlight %}
+		{%- endcapture %}
+
+		{%- include figure.html
+			content=content
+			caption="models/Artist.cfc"
+		-%}
 
 		<p>As you can see, we can find and update our changed <code>Artist</code> all in one expression. The same advice concerning an entity not being found applies.</p>
 
@@ -174,8 +198,8 @@ function updateAction( event, rc, prc ) {
 
 		<p>Finally, the last thing we want to do is to delete a record from the database. </p>
 
-		<figure class="figure">
-{%- highlight cfscript %}
+		{%- capture content %}
+			{%- highlight cfscript %}
 function delete( event, rc, prc ) {
 	param rc.id = "";
 
@@ -185,9 +209,13 @@ function delete( event, rc, prc ) {
 
 	relocate( "artists" );
 }
-{%- endhighlight %}
-			<figcaption class="figure-caption">models/Artist.cfc</figcaption>
-		</figure>
+			{%- endhighlight %}
+		{%- endcapture %}
+
+		{%- include figure.html
+			content=content
+			caption="models/Artist.cfc"
+		-%}
 
 		<p>All the previous notes apply. This time we just call the <code>delete()</code> method on the found <code>Artist</code> entity and then take the visitor back to the listing view.</p>
 
