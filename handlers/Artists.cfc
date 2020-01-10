@@ -4,11 +4,11 @@
 			.orderby( "id" )
 			.get();
 
-		if( artists.count() == 0 ) {
+		if( artists.len() == 0 ) {
 			relocate( "artists.create" );
 		}
 
-		prc.artists = artists.toArray();
+		prc.artists = artists;
 	}
 
 	function create( event, rc, prc ) {

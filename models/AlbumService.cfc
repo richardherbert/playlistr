@@ -10,11 +10,10 @@ component {
 			.findOrFail( id );
 	}
 
-	public array function getAllAsArray() {
+	public array function getAll() {
 		return wirebox.getInstance( "Album" )
 			.orderby( "id" )
-			.get()
-			.toArray();
+			.get();
 	}
 
 	public Album function create( required struct values ) {
