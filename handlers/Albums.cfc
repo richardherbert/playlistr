@@ -2,7 +2,7 @@
 	property AlbumService inject="AlbumService";
 
 	function index( event, rc, prc ) {
-		prc.albums = AlbumService.getAllAsArray();
+		prc.albums = AlbumService.getAll();
 
 		if( prc.albums.len() == 0 ) {
 			relocate( "albums.create" );
