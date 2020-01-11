@@ -120,15 +120,14 @@ public Album function getByID( required any id) {
 
 		<p>This should look similar to a portion of the <code>update()</code> action from the <code>Artists</code> handler.</p>
 
-		<h4>getAllAsArray()</h4>
+		<h4>getAll()</h4>
 
 		{%- capture content %}
 			{%- highlight cfscript %}
-public array function getAllAsArray() {
+public array function getAll() {
 	return wirebox.getInstance( "Album" )
 		.orderby( "id" )
-		.get()
-		.toArray();
+		.get();
 }
 			{%- endhighlight %}
 		{%- endcapture %}
@@ -138,7 +137,7 @@ public array function getAllAsArray() {
 			caption="models/AlbumService.cfc"
 		-%}
 
-		<p>Once again this should look familiar to a portion of the <code>index()</code> action. This time we've chained the <code>toArray()</code> method to our <code>get()</code> to convert the collection to an array before sending it back.</p>
+		<p>Once again this should look familiar to a portion of the <code>index()</code> action. The <code>get()</code> method returns the collection back as an array.</p>
 
 		<h4>create()</h4>
 
@@ -220,7 +219,7 @@ component extends="coldbox.system.EventHandler" {
 		{%- capture content %}
 			{%- highlight cfscript %}
 function index( event, rc, prc ) {
-	prc.albums = AlbumService.getAllAsArray();
+	prc.albums = AlbumService.getAll();
 
 	if( prc.albums.len() == 0 ) {
 		relocate( "albums.create" );
@@ -234,7 +233,7 @@ function index( event, rc, prc ) {
 			caption="handlers/Albums.cfc"
 		-%}
 
-		<p>We capture all the <code>Albums</code> into the variable <code>prc.albums</code> for our view with the <code>getAllAsArray()</code> method in the <code>AlbumService</code> component but bounce the visitor onto the create action if none are returned.</p>
+		<p>We capture all the <code>Albums</code> into the variable <code>prc.albums</code> for our view with the <code>getAll()</code> method in the <code>AlbumService</code> component but bounce the visitor onto the create action if none are returned.</p>
 
 		<h4>Action: create()</h4>
 
