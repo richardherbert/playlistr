@@ -18,8 +18,7 @@
 
 		prc.albums = getInstance( "album" )
 			.orderby( "id" )
-			.get()
-			.toArray();
+			.get();
 
 		prc.action = "Create";
 		prc.formAction = "songs.createAction";
@@ -50,8 +49,7 @@
 
 		prc.albums = getInstance( "Album" )
 			.orderby( "id" )
-			.get()
-			.toArray();
+			.get();
 
 		prc.action = "Update";
 		prc.formAction = "songs.updateAction";

@@ -13,8 +13,7 @@ component {
 	public array function getAllAsArray() {
 		return wirebox.getInstance( "Song" )
 			.orderby( "name" )
-			.get()
-			.toArray();
+			.get();
 	}
 
 	public Song function create( required struct values ) {
