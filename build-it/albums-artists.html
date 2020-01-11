@@ -134,8 +134,7 @@ function create( event, rc, prc ) {
 
 	prc.artists = getInstance( "Artist" )
 		.orderby( "id" )
-		.get()
-		.toArray();
+		.get();
 
 	prc.action = "Create";
 	prc.formAction = "albums.createAction";
@@ -192,8 +191,7 @@ function update( event, rc, prc ) {
 
 	prc.artists = getInstance( "Artist" )
 		.orderby( "id" )
-		.get()
-		.toArray();
+		.get();
 
 	prc.action = "Update";
 	prc.formAction = "albums.updateAction";
@@ -279,7 +277,7 @@ function update( event, rc, prc ) {
 
 	prc.name = artist.getName();
 
-	prc.albums = artist.getAlbums().toArray();
+	prc.albums = artist.getAlbums();
 
 	prc.action = "Update";
 	prc.formAction = "artists.updateAction";
