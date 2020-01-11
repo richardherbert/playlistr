@@ -42,7 +42,7 @@
 
 		prc.name = artist.getName();
 
-		prc.albums = artist.getAlbums().toArray();
+		prc.albums = artist.getAlbums();
 
 		prc.action = "Update";
 		prc.formAction = "artists.updateAction";
