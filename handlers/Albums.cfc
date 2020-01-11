@@ -2,7 +2,7 @@
 	property AlbumService inject="AlbumService";
 
 	function index( event, rc, prc ) {
-		prc.albums = AlbumService.getAllAsArray();
+		prc.albums = AlbumService.getAll();
 
 		if( prc.albums.len() == 0 ) {
 			relocate( "albums.create" );
@@ -18,8 +18,7 @@
 
 		prc.artists = getInstance( "Artist" )
 			.orderby( "id" )
-			.get()
-			.toArray();
+			.get();
 
 		prc.action = "Create";
 		prc.formAction = "albums.createAction";
@@ -50,8 +49,7 @@
 
 		prc.artists = getInstance( "Artist" )
 			.orderby( "id" )
-			.get()
-			.toArray();
+			.get();
 
 		prc.action = "Update";
 		prc.formAction = "albums.updateAction";
